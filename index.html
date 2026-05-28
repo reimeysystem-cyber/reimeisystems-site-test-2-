@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reimei systems | 黎明システムズ - 新たな未来を切り拓くシステム開発</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#0a0a12',
+                            dark: '#111122',
+                            blue: '#3b82f6',
+                            purple: '#8b5cf6',
+                            cyan: '#06b6d4',
+                            glow: 'rgba(59, 130, 246, 0.15)'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* カスタムスクールバー */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f1f38;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+
+        /* ネオングロー効果 */
+        .neon-border {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+        .neon-text {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-gradient-brand {
+            background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(139,92,246,0.1) 100%);
+        }
+
+        /* スクロールアニメーション用初期状態 */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-brand-black text-slate-100 font-sans overflow-x-hidden antialiased">
+
+    <!-- 背景粒子アニメーションキャンバス -->
+    <canvas id="particleCanvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-40"></canvas>
+
+    <!-- ヘッダーナビゲーション -->
+    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 backdrop-blur-md bg-brand-black/40 border-b border-white/5" id="mainHeader">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="relative w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-tr from-brand-blue to-brand-cyan p-[2px]">
+                    <div class="w-full h-full bg-brand-black rounded-[10px] flex items-center justify-center">
+                        <i data-lucide="compass" class="w-5 h-5 text-brand-cyan group-hover:rotate-45 transition-transform duration-500"></i>
+                    </div>
+                    <div class="absolute inset-0 bg-brand-blue/50 blur-md -z-10 rounded-xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-xl tracking-wider text-white">reimei systems</span>
+                    <span class="text-[9px] uppercase tracking-[0.3em] text-brand-cyan font-bold">黎明システムズ</span>
+                </div>
+            </a>
+
+            <!-- デスクトップナビ -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="#about" class="text-sm font-medium text-slate-300 hover:text-brand-cyan transition-colors">ABOUT</a>
+                <a href="#services" class="text-sm font-medium text-slate-300 hover:text-brand-cyan transition-colors">SERVICES</a>
+                <a href="#features" class="text-sm font-medium text-slate-300 hover:text-brand-cyan transition-colors">FEATURES</a>
+                <a href="#chat" class="px-5 py-2.5 rounded-full text-xs font-bold bg-gradient-to-r from-brand-blue to-brand-cyan text-white hover:shadow-lg hover:shadow-brand-blue/30 transition-all duration-300">
+                    AI CONSULTING
+                </a>
+            </nav>
+
+            <!-- モバイルメニューボタン -->
+            <button class="md:hidden text-slate-300 hover:text-white" id="menuBtn">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- モバイルナビゲーション（ドロワー） -->
+    <div id="mobileMenu" class="fixed inset-0 z-40 bg-brand-black/95 backdrop-blur-lg flex flex-col justify-center items-center gap-8 transition-all duration-500 transform translate-x-full md:hidden">
+        <button id="closeMenuBtn" class="absolute top-6 right-6 text-slate-400 hover:text-white">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <a href="#about" class="mobile-link text-2xl font-bold hover:text-brand-cyan">ABOUT</a>
+        <a href="#services" class="mobile-link text-2xl font-bold hover:text-brand-cyan">SERVICES</a>
+        <a href="#features" class="mobile-link text-2xl font-bold hover:text-brand-cyan">FEATURES</a>
+        <a href="#chat" class="mobile-link px-8 py-3 rounded-full text-base font-bold bg-gradient-to-r from-brand-blue to-brand-cyan text-white">AI CONSULTING</a>
+    </div>
+
+    <!-- ヒーローセクション -->
+    <section class="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6 overflow-hidden">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-blue/10 rounded-full filter blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-purple/10 rounded-full filter blur-[120px] animate-pulse-slow" style="animation-delay: 2s;"></div>
+        
+        <div class="max-w-5xl mx-auto text-center z-10">
+            <!-- 黎明（夜明け）のコンセプトバッジ -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8 animate-float">
+                <span class="w-2 h-2 rounded-full bg-brand-cyan animate-ping"></span>
+                <span class="text-xs font-semibold tracking-widest text-slate-300">NEW DAWN OF DIGITAL INNOVATION</span>
+            </div>
+
+            <!-- メインキャッチコピー -->
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight mb-8 leading-tight">
+                アイデアを、<br class="sm:hidden">
+                <span class="text-gradient">明日の現実</span>へ。
+            </h1>
+
+            <p class="text-base sm:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+                reimei systems（黎明システムズ）は、最先端のAI技術を開発フロー全体に積極導入。超高速・軽量なデスクトップアプリから、Discord Bot、各種Web/Robloxゲームまで、次世代のデジタル体験を創造します。
+            </p>
+
+            <!-- アクションボタン -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#services" class="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold bg-gradient-to-r from-brand-blue to-brand-cyan hover:shadow-lg hover:shadow-brand-blue/30 transition-all duration-300 text-center">
+                    サービスを見る
+                </a>
+                <a href="#chat" class="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-center flex items-center justify-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-brand-cyan"></i>
+                    AIで即時システム相談
+                </a>
+            </div>
+        </div>
+
+        <!-- スクロールダウンインジケーター -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 text-xs text-slate-500">
+            <span>SCROLL DOWN</span>
+            <div class="w-5 h-8 border-2 border-slate-700 rounded-full p-1 flex justify-center">
+                <div class="w-1 h-2 bg-brand-cyan rounded-full animate-bounce"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 企業理念 (ABOUT) -->
+    <section id="about" class="py-24 px-6 bg-brand-dark/40 relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- 左：テキスト（5カラム分） -->
+                <div class="lg:col-span-5 reveal">
+                    <span class="text-xs font-bold tracking-widest text-brand-cyan uppercase">01 / ABOUT US</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold mt-2 mb-6">常に「黎明」であり、<br>AIと共に歩むこと。</h2>
+                    <p class="text-slate-400 mb-6 leading-relaxed">
+                        変化の激しいデジタル社会において、私たちはコード生成、設計、デバッグ、検証の全フェーズにおいて**最先端AIを100%活用する「AI積極導入体制」**を構築しています。
+                    </p>
+                    <p class="text-slate-400 mb-8 leading-relaxed">
+                        AIによる爆発的な生産性と、経験豊富なエンジニアによる人間ならではの柔軟なクオリティコントロール。この2つが融合することで、他社を圧倒する「超高速な開発スピード」と「無駄のない軽量・堅牢なシステム」の両立を実現しています。
+                    </p>
+                </div>
+
+                <!-- 右：ビジュアル（7カラム分） -->
+                <div class="lg:col-span-7 grid grid-cols-2 gap-4 reveal" style="transition-delay: 200ms;">
+                    <div class="p-6 rounded-2xl bg-gradient-brand border border-white/5 hover:border-brand-blue/20 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-brand-blue/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="sparkles" class="w-6 h-6 text-brand-blue"></i>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">全面的なAI積極活用</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">仕様策定からプログラミング、バグ検知、自動テストまで、全フローにAIを融合させています。</p>
+                    </div>
+
+                    <div class="p-6 rounded-2xl bg-gradient-brand border border-white/5 hover:border-brand-purple/20 transition-all mt-6 group">
+                        <div class="w-12 h-12 rounded-xl bg-brand-purple/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="zap" class="w-6 h-6 text-brand-purple"></i>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">驚異的な軽量化</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">無駄なフレームワークや肥大化したライブラリを徹底排除し、スマートで高速なコードを設計します。</p>
+                    </div>
+
+                    <div class="p-6 rounded-2xl bg-gradient-brand border border-white/5 hover:border-brand-cyan/20 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-brand-cyan/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="rocket" class="w-6 h-6 text-brand-cyan"></i>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">圧倒的な機動力</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">AI駆動のアジャイル開発により、驚異的なスピードで試作から本開発まで完遂します。</p>
+                    </div>
+
+                    <div class="p-6 rounded-2xl bg-gradient-brand border border-white/5 hover:border-white/10 transition-all mt-6 group">
+                        <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="swatchbook" class="w-6 h-6 text-slate-300"></i>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">遊び心あるゲーム開発</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">ただのシステム屋に留まらず、WebゲームやRobloxなどエンタメ領域でも最高の体験を創出します。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 事業内容 (SERVICES) -->
+    <section id="services" class="py-24 px-6 relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+                <span class="text-xs font-bold tracking-widest text-brand-cyan uppercase">02 / SERVICES</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold mt-2 mb-4">黎明システムズの提供サービス</h2>
+                <p class="text-slate-400">AI開発フローと職人技術を組み合わせ、個性的かつ超高品質なプロダクトをご提供します。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <!-- サービス1: 時計アプリ.exe -->
+                <div class="p-8 rounded-2xl bg-brand-dark/50 border border-white/5 hover:border-brand-blue/30 transition-all duration-300 flex flex-col justify-between group reveal">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-blue/10 flex items-center justify-center mb-8 text-brand-blue group-hover:scale-110 transition-transform">
+                            <i data-lucide="clock" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">高速・超軽量時計アプリ (.exe)</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                            ミリ秒以下で起動する「高速スタートアップ」と、メモリやCPU負荷を極限まで抑えた「超軽量設計」を両立した、Windowsデスクトップ専用の時計アプリケーション（.exe）をご提供します。
+                        </p>
+                    </div>
+                    <ul class="space-y-2 border-t border-white/5 pt-4">
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-blue"></i> 高速スタートアップ（瞬時起動）</li>
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-blue"></i> PCのスペックを選ばない超省リソース設計</li>
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-blue"></i> デスクトップに馴染む洗練されたミニマルUI</li>
+                    </ul>
+                </div>
+
+                <!-- サービス2: Discord Bot -->
+                <div class="p-8 rounded-2xl bg-brand-dark/50 border border-white/5 hover:border-brand-purple/30 transition-all duration-300 flex flex-col justify-between group reveal">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-purple/10 flex items-center justify-center mb-8 text-brand-purple group-hover:scale-110 transition-transform">
+                            <i data-lucide="message-square" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Discord Bot 制作・開発</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                            Discordサーバーの管理自動化、ユーザー対応、外部データベースとの連携など、サーバー運用を大幅に効率化する高性能かつ安定したDiscord Botの受託開発を行います。
+                        </p>
+                    </div>
+                    <ul class="space-y-2 border-t border-white/5 pt-4">
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-purple"></i> サーバー荒らし対策・自動ロール付与</li>
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-purple"></i> Geminiや独自AIモデルを連携した対話型Bot</li>
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-purple"></i> 24時間365日止まらない強固な常時監視サーバーでの運用</li>
+                    </ul>
+                </div>
+
+                <!-- サービス3: ウェブゲーム -->
+                <div class="p-8 rounded-2xl bg-brand-dark/50 border border-white/5 hover:border-brand-cyan/30 transition-all duration-300 flex flex-col justify-between group reveal">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-cyan/10 flex items-center justify-center mb-8 text-brand-cyan group-hover:scale-110 transition-transform">
+                            <i data-lucide="gamepad-2" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">ウェブゲーム (HTML5) 作成</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                            ダウンロードやインストールを必要とせず、ブラウザを開くだけでPC・スマートフォン問わず一瞬でプレイできる高品質なウェブゲームを開発します。
+                        </p>
+                    </div>
+                    <ul class="space-y-2 border-t border-white/5 pt-4">
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-cyan"></i> HTML5/Canvas/WebGLによる滑らかな描画性能</li>
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-cyan"></i> シンプルなカジュアルゲームからリアルタイム対戦まで</li>
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-cyan"></i> SNS等への高い拡散性・親和性</li>
+                    </ul>
+                </div>
+
+                <!-- サービス4: Roblox -->
+                <div class="p-8 rounded-2xl bg-brand-dark/50 border border-white/5 hover:border-emerald-500/30 transition-all duration-300 flex flex-col justify-between group reveal">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-8 text-emerald-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="cuboid" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Roblox ゲーム制作</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                            世界中で爆発的な人気を誇るプラットフォーム「Roblox」内で動作する3Dマルチプレイヤーゲームを企画からプログラミング、アセットデザインまで一貫して制作します。
+                        </p>
+                    </div>
+                    <ul class="space-y-2 border-t border-white/5 pt-4">
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="text-emerald-400 w-3.5 h-3.5"></i> Lua言語を駆使した高度なアクション・システム設計</li>
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="text-emerald-400 w-3.5 h-3.5"></i> メタバース空間内での集客・マネタイズ機能設計</li>
+                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="text-emerald-400 w-3.5 h-3.5"></i> スマホ・PC・VRなどマルチプラットフォーム自動対応</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特徴・強み (FEATURES) -->
+    <section id="features" class="py-24 px-6 bg-brand-dark/30 border-y border-white/5 relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- 左：ビジュアル（リッチな情報提示） -->
+                <div class="space-y-6 order-2 lg:order-1 reveal">
+                    <div class="p-6 rounded-2xl bg-brand-black border border-white/5 flex items-start gap-4">
+                        <div class="p-3 rounded-lg bg-emerald-500/10 text-emerald-400">
+                            <i data-lucide="bot" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-1">開発全体にAIを100%積極導入</h4>
+                            <p class="text-sm text-slate-400">すべてのプロトタイピング、コーディング、動作試験にAIアシスタントを組み込み、納期とコストを劇的に最適化しています。</p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 rounded-2xl bg-brand-black border border-white/5 flex items-start gap-4">
+                        <div class="p-3 rounded-lg bg-orange-500/10 text-orange-400">
+                            <i data-lucide="activity" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-1">コードレベルの無駄排除・最適化</h4>
+                            <p class="text-sm text-slate-400">時計アプリに代表される「軽量・サクサク動くこと」へのこだわり。ユーザーを待たせない快適性を最優先にします。</p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 rounded-2xl bg-brand-black border border-white/5 flex items-start gap-4">
+                        <div class="p-3 rounded-lg bg-pink-500/10 text-pink-400">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-1">Roblox & Discord などの現代文化対応</h4>
+                            <p class="text-sm text-slate-400">メタバースやコミュニケーションツールなど、若者層・現代ユーザーに確実に刺さるプラットフォームで高い開発実績があります。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右：テキスト -->
+                <div class="space-y-6 order-1 lg:order-2 reveal" style="transition-delay: 200ms;">
+                    <span class="text-xs font-bold tracking-widest text-brand-cyan uppercase">03 / WHY CHOOSE US</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold">私たちは「AIの速度」と「驚きの軽さ」で価値を創ります。</h2>
+                    <p class="text-slate-400 leading-relaxed">
+                        スマートフォンの普及やマシンスペックの向上に甘え、昨今のシステムやゲームは肥大化する一方です。私たちは「いかに速く起動するか」「いかにPCやシステムに負荷をかけないか」を愚直に突き詰め、ユーザー体験を根本から向上させます。
+                    </p>
+                    <div class="pt-6 border-t border-white/5 grid grid-cols-2 gap-6">
+                        <div>
+                            <span class="text-4xl font-black text-brand-blue tracking-tight">Active</span>
+                            <p class="text-xs text-slate-500 mt-1">100% AIコラボレーション設計</p>
+                        </div>
+                        <div>
+                            <span class="text-4xl font-black text-brand-cyan tracking-tight">Zero</span>
+                            <p class="text-xs text-slate-500 mt-1">無駄なリソース待機の排除</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI 技術相談チャットボット (AI CONSULTING) -->
+    <section id="chat" class="py-24 px-6 relative bg-brand-dark/10">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-12 reveal">
+                <span class="text-xs font-bold tracking-widest text-brand-cyan uppercase">04 / AI CHAT CONSULTING</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold mt-2 mb-4">AI技術顧問「Rei」に今すぐ相談</h2>
+                <p class="text-slate-400 text-sm">軽量アプリ開発、Discord Botのアイデア、Robloxやウェブゲームの企画など、AIの「Rei」が瞬時にお答えします。お気軽にお声掛けください！</p>
+            </div>
+
+            <!-- チャットウインドウ -->
+            <div class="rounded-2xl border border-white/10 bg-brand-dark/60 backdrop-blur-md overflow-hidden shadow-2xl flex flex-col h-[580px] reveal">
+                <!-- チャットヘッダー -->
+                <div class="bg-brand-black/80 px-6 py-4 border-b border-white/10 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="relative w-9 h-9 rounded-full bg-gradient-to-r from-brand-blue to-brand-cyan p-[1px]">
+                            <div class="w-full h-full bg-brand-black rounded-full flex items-center justify-center">
+                                <i data-lucide="bot" class="w-4 h-4 text-brand-cyan" id="botIconHeader"></i>
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-amber-500 border-2 border-brand-black rounded-full" id="statusDot"></span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-white leading-none">Rei @ AI Technical Advisor</h4>
+                            <span class="text-[10px] text-slate-500" id="statusText">Key Required | Powered by Gemini 2.5</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="toggleSettingsBtn" class="text-slate-400 hover:text-white transition-colors relative" title="Gemini APIキー設定">
+                            <i data-lucide="settings" class="w-4 h-4"></i>
+                            <span class="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full animate-ping" id="settingsAlertDot"></span>
+                        </button>
+                        <button id="clearChatBtn" class="text-slate-500 hover:text-slate-300 transition-colors" title="チャット履歴を消去">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- APIキー設定ドロワー (アコーディオン) -->
+                <div id="settingsDrawer" class="bg-brand-black/90 border-b border-white/10 px-6 py-4 transition-all duration-300">
+                    <div class="max-w-2xl mx-auto">
+                        <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="key" class="w-3.5 h-3.5 text-brand-cyan"></i>
+                            Gemini APIキーの登録
+                        </label>
+                        <div class="flex gap-2">
+                            <div class="relative flex-1">
+                                <input type="password" id="apiKeyInput" placeholder="AI Studioで取得したAPIキー (AIzaSy...)"
+                                       class="w-full bg-white/5 border border-white/10 rounded-xl pl-4 pr-10 py-2.5 text-xs focus:outline-none focus:border-brand-cyan text-white transition-colors">
+                                <button type="button" id="toggleMaskBtn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                                    <i data-lucide="eye" class="w-4 h-4" id="eyeIcon"></i>
+                                </button>
+                            </div>
+                            <button id="saveKeyBtn" class="px-5 py-2.5 bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-xs rounded-xl hover:opacity-90 active:scale-95 transition-all">
+                                保存
+                            </button>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mt-2.5">
+                            <p class="text-[10px] text-slate-500">
+                                ※キーはブラウザに安全にのみ保存され、開発者を含むいかなる第三者にも送信されません。
+                            </p>
+                            <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" class="text-[10px] text-brand-cyan hover:underline flex items-center gap-0.5 font-semibold">
+                                無料でAPIキーを取得する (Google AI Studio) <i data-lucide="external-link" class="w-3 h-3"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- メッセージ表示エリア -->
+                <div id="chatMessages" class="flex-1 p-6 overflow-y-auto space-y-4 text-sm scroll-smooth">
+                    <!-- APIキー警告通知 (未登録時のみ表示) -->
+                    <div id="apiKeyWarning" class="p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 text-amber-300 text-xs flex flex-col gap-2">
+                        <div class="flex items-center gap-2 font-bold">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400 animate-pulse"></i>
+                            <span>Gemini APIキーが設定されていません</span>
+                        </div>
+                        <p class="text-slate-400 leading-relaxed">
+                            このチャットボットは、GitHubでの公開用に開発者の秘密キーを埋め込まないよう設計されています。
+                            お手数ですが、右上の<strong class="text-white">設定アイコン（歯車）</strong>をクリックし、お客様ご自身のAPIキーをご登録ください。
+                        </p>
+                    </div>
+
+                    <!-- AI初期メッセージ -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                            <i data-lucide="bot" class="w-4 h-4 text-brand-cyan"></i>
+                        </div>
+                        <div class="bg-white/5 text-slate-300 px-4 py-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed">
+                            はじめまして！reimei systems（黎明システムズ）のAI技術顧問「Rei（レイ）」です。
+                            <br><br>
+                            「Discord Botでこんな機能作れる？」「Robloxでゲームを作りたい」「時計アプリってどのくらい軽いの？」など、気になることがあればどんなことでも聞いてくださいね！
+                        </div>
+                    </div>
+                </div>
+
+                <!-- チャット入力エリア -->
+                <form id="chatForm" class="p-4 bg-brand-black/40 border-t border-white/10 flex items-center gap-2">
+                    <input type="text" id="chatInput" placeholder="メッセージを入力してください..." required
+                           class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan transition-colors text-white">
+                    <button type="submit" id="sendBtn" class="p-3 bg-gradient-to-r from-brand-blue to-brand-cyan hover:opacity-90 active:scale-95 transition-all text-white rounded-xl flex items-center justify-center shrink-0">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="bg-brand-black py-12 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 p-[1px]">
+                    <i data-lucide="compass" class="w-4 h-4 text-brand-cyan"></i>
+                </div>
+                <span class="font-bold text-sm text-white tracking-widest uppercase">reimei systems</span>
+            </div>
+            <p class="text-xs text-slate-600">&copy; 2026 reimei systems. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- 通知モーダル (アラート代替用) -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-brand-dark border border-brand-cyan/40 px-5 py-4 rounded-xl shadow-xl flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-brand-cyan/10 flex items-center justify-center text-brand-cyan">
+                <i data-lucide="check" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h5 class="text-xs font-bold text-white" id="toastTitle">システム通知</h5>
+                <p class="text-[10px] text-slate-400" id="toastMessage">処理が完了しました。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript & API 連携処理 -->
+    <script>
+        // Lucideアイコンの初期化
+        lucide.createIcons();
+
+        /* ==========================================================================
+           1. パーティクル背景アニメーション
+           ========================================================================== */
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 60;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.color = Math.random() > 0.5 ? 'rgba(59, 130, 246, 0.4)' : 'rgba(6, 182, 212, 0.4)';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            // 近い粒子同士を線で繋ぐ
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.strokeStyle = `rgba(59, 130, 246, ${0.1 - dist / 1200})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('DOMContentLoaded', () => {
+            resizeCanvas();
+            animate();
+        });
+
+        /* ==========================================================================
+           2. スクロールヘッダー効果 & Revealアニメーション
+           ========================================================================== */
+        const header = document.getElementById('mainHeader');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('bg-brand-black/90', 'border-white/10');
+                header.classList.remove('bg-brand-black/40', 'border-white/5');
+            } else {
+                header.classList.add('bg-brand-black/40', 'border-white/5');
+                header.classList.remove('bg-brand-black/90', 'border-white/10');
+            }
+
+            // 要素のスクロールイン表示
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(reveal => {
+                const windowHeight = window.innerHeight;
+                const revealTop = reveal.getBoundingClientRect().top;
+                const revealPoint = 100;
+
+                if (revealTop < windowHeight - revealPoint) {
+                    reveal.classList.add('active');
+                }
+            });
+        });
+
+        // 初期状態で可視域にある要素を表示
+        setTimeout(() => {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(reveal => {
+                if (reveal.getBoundingClientRect().top < window.innerHeight) {
+                    reveal.classList.add('active');
+                }
+            });
+        }, 100);
+
+        /* ==========================================================================
+           3. モバイルメニュー開閉
+           ========================================================================== */
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+
+        /* ==========================================================================
+           4. カスタムトースト通知機能 (ブラウザalert回避)
+           ========================================================================== */
+        const toast = document.getElementById('toast');
+        const toastTitle = document.getElementById('toastTitle');
+        const toastMsg = document.getElementById('toastMessage');
+
+        function showToast(message, title = 'システム通知') {
+            toastTitle.innerText = title;
+            toastMsg.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 4000);
+        }
+
+        /* ==========================================================================
+           5. AIキー入力設定の制御・ローカルストレージ管理
+           ========================================================================== */
+        const toggleSettingsBtn = document.getElementById('toggleSettingsBtn');
+        const settingsDrawer = document.getElementById('settingsDrawer');
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        const toggleMaskBtn = document.getElementById('toggleMaskBtn');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const saveKeyBtn = document.getElementById('saveKeyBtn');
+        const apiKeyWarning = document.getElementById('apiKeyWarning');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const settingsAlertDot = document.getElementById('settingsAlertDot');
+
+        let userApiKey = localStorage.getItem('reimei_gemini_api_key') || "";
+
+        // 初期ステータスの更新
+        function updateApiKeyUIStatus() {
+            if (userApiKey) {
+                apiKeyInput.value = userApiKey;
+                statusDot.className = "absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-brand-black rounded-full";
+                statusText.innerText = "Online | API Key Active";
+                statusText.classList.add('text-slate-400');
+                statusText.classList.remove('text-amber-500');
+                settingsAlertDot.classList.add('hidden');
+                settingsDrawer.classList.add('hidden');
+                if (apiKeyWarning) apiKeyWarning.classList.add('hidden');
+            } else {
+                apiKeyInput.value = "";
+                statusDot.className = "absolute bottom-0 right-0 w-2.5 h-2.5 bg-amber-500 border-2 border-brand-black rounded-full animate-pulse";
+                statusText.innerText = "Key Required | Powered by Gemini";
+                statusText.classList.add('text-amber-500');
+                statusText.classList.remove('text-slate-400');
+                settingsAlertDot.classList.remove('hidden');
+                settingsDrawer.classList.remove('hidden'); // 初回未設定時は明示的にアコーディオンを開いておく
+                if (apiKeyWarning) apiKeyWarning.classList.remove('hidden');
+            }
+        }
+
+        // ページロード時に設定を反映
+        updateApiKeyUIStatus();
+
+        // 歯車ボタンでアコーディオン開閉
+        toggleSettingsBtn.addEventListener('click', () => {
+            settingsDrawer.classList.toggle('hidden');
+        });
+
+        // 目のアイコンでAPIキーのマスク/表示切り替え
+        toggleMaskBtn.addEventListener('click', () => {
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                eyeIcon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                apiKeyInput.type = 'password';
+                eyeIcon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        });
+
+        // APIキー保存
+        saveKeyBtn.addEventListener('click', () => {
+            const trimmedKey = apiKeyInput.value.trim();
+            if (trimmedKey) {
+                localStorage.setItem('reimei_gemini_api_key', trimmedKey);
+                userApiKey = trimmedKey;
+                showToast('APIキーをブラウザに安全に保存しました。', '設定完了');
+            } else {
+                localStorage.removeItem('reimei_gemini_api_key');
+                userApiKey = "";
+                showToast('APIキーを消去しました。', '設定解除');
+            }
+            updateApiKeyUIStatus();
+        });
+
+        /* ==========================================================================
+           6. AIチャット機能 (Gemini 2.5 API連携 + 指数バックオフ)
+           ========================================================================== */
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+        const clearChatBtn = document.getElementById('clearChatBtn');
+
+        // Gemini 2.5 APIを呼び出す関数 (指数バックオフ & リトライ付き)
+        async function fetchGeminiResponse(userQuery, retries = 5, delay = 1000) {
+            const systemPrompt = `
+You are Rei, the AI Technical Advisor for "reimei systems" (黎明システムズ).
+reimei systems is a highly innovative development team that actively and aggressively integrates AI into its development workflow. 
+
+We offer the following core services:
+1. "高速・超軽量時計アプリ (.exe)": A Windows desktop clock utility featuring milliseconds startup time and extreme optimization to consume virtually zero CPU/memory.
+2. "Discord Bot 制作": Multi-functional Discord bots automating server activities and integrating LLM-driven AI chat capabilities.
+3. "ウェブゲーム (HTML5) 作成": High-performance web games playable instantly on browser across both PC and Mobile without installation.
+4. "Roblox ゲーム制作": Rich 3D multiplayer games designed and scripted in Lua for the Roblox metaverse.
+
+Guidelines:
+1. Always reply in friendly, professional, and clear Japanese.
+2. Highlight how "reimei systems" merges cutting-edge AI power with lightweight and optimized craftsmanship.
+3. Guide users constructively on how we can implement their ideas (for clocks, Discord bots, Web games, or Roblox games).
+4. Since this is an interactive website chatbot, keep responses relatively concise and structured (use bullet points or lists if necessary).
+            `;
+
+            // 設定されているユーザーAPIキーを使用
+            const activeKey = userApiKey || "";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            for (let attempt = 0; attempt < retries; attempt++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 400 || response.status === 403) {
+                        throw new Error("INVALID_API_KEY");
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`API returned state ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (aiText) return aiText;
+                    throw new Error("Invalid response structure from Gemini API");
+                } catch (error) {
+                    // APIキー自体の不具合はリトライせず即時終了
+                    if (error.message === "INVALID_API_KEY") {
+                        throw error;
+                    }
+
+                    if (attempt === retries - 1) {
+                        throw error; // 全てのリトライが失敗した場合
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2; // 指数バックオフ
+                }
+            }
+        }
+
+        // チャットにメッセージを挿入する
+        function appendMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex items-start gap-3 fade-in';
+            
+            if (sender === 'user') {
+                msgDiv.innerHTML = `
+                    <div class="flex items-start gap-3 justify-end w-full">
+                        <div class="bg-brand-blue/20 text-white border border-brand-blue/30 px-4 py-3 rounded-2xl rounded-tr-none max-w-[85%] leading-relaxed">
+                            ${escapeHtml(text)}
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-brand-blue/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="user" class="w-4 h-4 text-brand-blue"></i>
+                        </div>
+                    </div>
+                `;
+            } else {
+                msgDiv.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                        <i data-lucide="bot" class="w-4 h-4 text-brand-cyan"></i>
+                    </div>
+                    <div class="bg-white/5 text-slate-300 px-4 py-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed">
+                        ${text.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+            }
+            chatMessages.appendChild(msgDiv);
+            lucide.createIcons(); // 新規挿入されたアイコンを有効化
+            chatMessages.scrollTop = chatMessages.scrollHeight; // スクロール最下部へ
+        }
+
+        // ローディングアニメーションを挿入
+        function showLoadingIndicator() {
+            const loaderDiv = document.createElement('div');
+            loaderDiv.id = 'chatLoader';
+            loaderDiv.className = 'flex items-start gap-3';
+            loaderDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                    <i data-lucide="bot" class="w-4 h-4 text-brand-cyan"></i>
+                </div>
+                <div class="bg-white/5 text-slate-400 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-brand-cyan animate-bounce" style="animation-delay: 0ms;"></span>
+                    <span class="w-2 h-2 rounded-full bg-brand-cyan animate-bounce" style="animation-delay: 150ms;"></span>
+                    <span class="w-2 h-2 rounded-full bg-brand-cyan animate-bounce" style="animation-delay: 300ms;"></span>
+                </div>
+            `;
+            chatMessages.appendChild(loaderDiv);
+            lucide.createIcons();
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeLoadingIndicator() {
+            const loader = document.getElementById('chatLoader');
+            if (loader) loader.remove();
+        }
+
+        function escapeHtml(string) {
+            return String(string).replace(/[&<>"']/g, function (s) {
+                return {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[s];
+            });
+        }
+
+        // 送信イベント
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // APIキーが未登録の場合、送信をブロックして設定画面へ誘導
+            if (!userApiKey) {
+                showToast('APIキーを入力・保存してからもう一度送信してください。', 'キー未設定');
+                settingsDrawer.classList.remove('hidden'); // 設定欄を開く
+                apiKeyInput.focus();
+                return;
+            }
+
+            // ユーザーメッセージを追加
+            appendMessage('user', message);
+            chatInput.value = '';
+
+            // ローディング表示
+            showLoadingIndicator();
+
+            try {
+                // APIを叩く
+                const response = await fetchGeminiResponse(message);
+                removeLoadingIndicator();
+                // AIメッセージを追加
+                appendMessage('ai', response);
+            } catch (error) {
+                removeLoadingIndicator();
+                if (error.message === "INVALID_API_KEY") {
+                    appendMessage('ai', '【エラー】入力されたGemini APIキーが無効であるか、正しくありません。右上の歯車アイコンから正しいAPIキーを再設定してください。');
+                    showToast('保存されているキーが無効です。', 'キーエラー');
+                    settingsDrawer.classList.remove('hidden');
+                } else {
+                    appendMessage('ai', '申し訳ございません。通信中にエラーが発生しました。時間を置いてから再度お試しいただくか、AIチャット顧問「Rei」へ再度メッセージをお送りください。');
+                }
+                console.error("Chat Error:", error);
+            }
+        });
+
+        // チャットログ消去
+        clearChatBtn.addEventListener('click', () => {
+            chatMessages.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                        <i data-lucide="bot" class="w-4 h-4 text-brand-cyan"></i>
+                    </div>
+                    <div class="bg-white/5 text-slate-300 px-4 py-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed">
+                        チャット履歴を消去しました。何でも聞いてくださいね！
+                    </div>
+                </div>
+            `;
+            if (!userApiKey && apiKeyWarning) {
+                // 未設定時の警告を再挿入
+                chatMessages.insertBefore(apiKeyWarning, chatMessages.firstChild);
+                apiKeyWarning.classList.remove('hidden');
+            }
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
