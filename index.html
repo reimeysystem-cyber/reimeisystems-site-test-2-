@@ -1,941 +1,2537 @@
 <!DOCTYPE html>
-<html lang="ja" class="scroll-smooth">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>reimei systems | 黎明システムズ - 新たな未来を切り拓くシステム開発</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            black: '#0a0a12',
-                            dark: '#111122',
-                            blue: '#3b82f6',
-                            purple: '#8b5cf6',
-                            cyan: '#06b6d4',
-                            glow: 'rgba(59, 130, 246, 0.15)'
-                        }
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* カスタムスクールバー */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0a12;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1f1f38;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3b82f6;
-        }
-
-        /* ネオングロー効果 */
-        .neon-border {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
-            border: 1px solid rgba(59, 130, 246, 0.5);
-        }
-        .neon-text {
-            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-        }
-        .text-gradient {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .bg-gradient-brand {
-            background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(139,92,246,0.1) 100%);
-        }
-
-        /* スクロールアニメーション用初期状態 */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease-out;
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>黎明システム 公式Shop</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
+    body {
+      font-family: 'Zen Kaku Gothic New', 'Space Grotesk', sans-serif;
+    }
+  </style>
 </head>
-<body class="bg-brand-black text-slate-100 font-sans overflow-x-hidden antialiased">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-slate-900">
 
-    <!-- 背景粒子アニメーションキャンバス -->
-    <canvas id="particleCanvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-40"></canvas>
-
-    <!-- ヘッダーナビゲーション -->
-    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 backdrop-blur-md bg-brand-black/40 border-b border-white/5" id="mainHeader">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="#" class="flex items-center gap-3 group">
-                <div class="relative w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-tr from-brand-blue to-brand-cyan p-[2px]">
-                    <div class="w-full h-full bg-brand-black rounded-[10px] flex items-center justify-center">
-                        <i data-lucide="compass" class="w-5 h-5 text-brand-cyan group-hover:rotate-45 transition-transform duration-500"></i>
-                    </div>
-                    <div class="absolute inset-0 bg-brand-blue/50 blur-md -z-10 rounded-xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-                <div class="flex flex-col">
-                    <span class="font-extrabold text-xl tracking-wider text-white">reimei systems</span>
-                    <span class="text-[9px] uppercase tracking-[0.3em] text-brand-cyan font-bold">黎明システムズ</span>
-                </div>
-            </a>
-
-            <!-- デスクトップナビ -->
-            <nav class="hidden md:flex items-center gap-8">
-                <a href="#about" class="text-sm font-medium text-slate-300 hover:text-brand-cyan transition-colors">ABOUT</a>
-                <a href="#services" class="text-sm font-medium text-slate-300 hover:text-brand-cyan transition-colors">SERVICES</a>
-                <a href="#features" class="text-sm font-medium text-slate-300 hover:text-brand-cyan transition-colors">FEATURES</a>
-                <a href="#chat" class="px-5 py-2.5 rounded-full text-xs font-bold bg-gradient-to-r from-brand-blue to-brand-cyan text-white hover:shadow-lg hover:shadow-brand-blue/30 transition-all duration-300">
-                    AI CONSULTING
-                </a>
-            </nav>
-
-            <!-- モバイルメニューボタン -->
-            <button class="md:hidden text-slate-300 hover:text-white" id="menuBtn">
-                <i data-lucide="menu" class="w-6 h-6"></i>
-            </button>
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 transition-all">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <!-- Logo -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('shop')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <i class="fa-solid fa-layer-group text-slate-950 text-xl"></i>
         </div>
-    </header>
+        <div>
+          <h1 class="text-lg font-bold tracking-wider bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">黎明システム</h1>
+          <p class="text-[10px] text-slate-400 tracking-widest uppercase">Official Family Shop</p>
+        </div>
+      </div>
 
-    <!-- モバイルナビゲーション（ドロワー） -->
-    <div id="mobileMenu" class="fixed inset-0 z-40 bg-brand-black/95 backdrop-blur-lg flex flex-col justify-center items-center gap-8 transition-all duration-500 transform translate-x-full md:hidden">
-        <button id="closeMenuBtn" class="absolute top-6 right-6 text-slate-400 hover:text-white">
-            <i data-lucide="x" class="w-8 h-8"></i>
+      <!-- Navigation & User Status -->
+      <div class="flex items-center space-x-2 sm:space-x-4">
+        <!-- User Points Indicator -->
+        <div class="hidden sm:flex items-center space-x-1.5 bg-slate-950/80 px-3 py-1.5 rounded-full border border-slate-800 text-xs text-amber-400 font-bold">
+          <i class="fa-solid fa-coins"></i>
+          <span id="header-user-points">0</span><span>pt</span>
+        </div>
+
+        <!-- User Name Tag -->
+        <button onclick="openUserModal()" class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700/80 px-3 py-1.5 rounded-full border border-slate-700 transition text-xs sm:text-sm">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="header-user-name" class="font-medium max-w-[100px] truncate font-bold text-slate-200">ゲスト</span>
+          <i class="fa-solid fa-pen text-[10px] text-slate-400"></i>
         </button>
-        <a href="#about" class="mobile-link text-2xl font-bold hover:text-brand-cyan">ABOUT</a>
-        <a href="#services" class="mobile-link text-2xl font-bold hover:text-brand-cyan">SERVICES</a>
-        <a href="#features" class="mobile-link text-2xl font-bold hover:text-brand-cyan">FEATURES</a>
-        <a href="#chat" class="mobile-link px-8 py-3 rounded-full text-base font-bold bg-gradient-to-r from-brand-blue to-brand-cyan text-white">AI CONSULTING</a>
+
+        <!-- DM Button -->
+        <button onclick="openDMDrawer()" class="relative p-2 text-slate-300 hover:text-cyan-400 transition" title="ダイレクトメッセージ">
+          <i class="fa-solid fa-comments text-xl"></i>
+          <span id="dm-badge" class="absolute -top-1 -right-1 bg-cyan-500 text-slate-950 text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+        </button>
+
+        <!-- Cart Button -->
+        <button onclick="toggleCart()" class="relative p-2 text-slate-300 hover:text-cyan-400 transition" title="カート">
+          <i class="fa-solid fa-shopping-cart text-xl"></i>
+          <span id="cart-badge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+        </button>
+
+        <!-- Admin Access Button -->
+        <button id="admin-nav-btn" onclick="openAdminAuthModal()" class="flex items-center space-x-1.5 bg-indigo-950/60 hover:bg-indigo-900/80 text-indigo-300 px-3 py-1.5 rounded-lg border border-indigo-800/50 transition text-xs font-medium">
+          <i class="fa-solid fa-lock"></i>
+          <span id="admin-btn-text">管理室</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8">
+    
+    <!-- Toast Notification Overlay -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-850 border border-cyan-500/30 text-slate-100 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+      <div id="toast-icon" class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+        <i class="fa-solid fa-info"></i>
+      </div>
+      <div>
+        <p id="toast-text" class="text-sm font-medium"></p>
+      </div>
     </div>
 
-    <!-- ヒーローセクション -->
-    <section class="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6 overflow-hidden">
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-blue/10 rounded-full filter blur-[120px] animate-pulse-slow"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-purple/10 rounded-full filter blur-[120px] animate-pulse-slow" style="animation-delay: 2s;"></div>
-        
-        <div class="max-w-5xl mx-auto text-center z-10">
-            <!-- 黎明（夜明け）のコンセプトバッジ -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8 animate-float">
-                <span class="w-2 h-2 rounded-full bg-brand-cyan animate-ping"></span>
-                <span class="text-xs font-semibold tracking-widest text-slate-300">NEW DAWN OF DIGITAL INNOVATION</span>
-            </div>
-
-            <!-- メインキャッチコピー -->
-            <h1 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight mb-8 leading-tight">
-                アイデアを、<br class="sm:hidden">
-                <span class="text-gradient">明日の現実</span>へ。
-            </h1>
-
-            <p class="text-base sm:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-                reimei systems（黎明システムズ）は、最先端のAI技術を開発フロー全体に積極導入。超高速・軽量なデスクトップアプリから、Discord Bot、各種Web/Robloxゲームまで、次世代のデジタル体験を創造します。
+    <!-- Active Tab Container -->
+    <div>
+      
+      <!-- ================= SHOP TAB ================= -->
+      <section id="tab-shop" class="space-y-8">
+        <!-- Hero Banner -->
+        <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-slate-950 to-slate-900 border border-slate-800 p-6 sm:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.1),transparent_40%)]"></div>
+          <div class="space-y-3 max-w-xl z-10">
+            <span class="px-2.5 py-1 text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full flex items-center gap-1.5 w-max">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+              黎明システム クラウド同期中
+            </span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+              黎明システム メンバー専用闇市
+            </h2>
+            <p class="text-slate-400 text-sm sm:text-base">
+              月最大 <strong class="text-amber-400 font-extrabold">100 pt</strong> が支給されます！ポイントでお得にお買い物。不足した差額分は現地で現金払いしてください。
             </p>
-
-            <!-- アクションボタン -->
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="#services" class="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold bg-gradient-to-r from-brand-blue to-brand-cyan hover:shadow-lg hover:shadow-brand-blue/30 transition-all duration-300 text-center">
-                    サービスを見る
-                </a>
-                <a href="#chat" class="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-center flex items-center justify-center gap-2">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-brand-cyan"></i>
-                    AIで即時システム相談
-                </a>
+          </div>
+          <div class="flex flex-col sm:flex-row items-center gap-4 z-10 shrink-0">
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 w-full sm:w-auto flex items-center space-x-3">
+              <div class="w-10 h-10 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg flex items-center justify-center text-xl shrink-0">
+                <i class="fa-solid fa-coins"></i>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-500 block uppercase font-bold">マイ黎明pt</span>
+                <span id="hero-user-points" class="font-extrabold text-lg text-amber-400">0</span> <span class="text-xs text-slate-400">pt</span>
+              </div>
             </div>
+
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 w-full sm:w-auto">
+              <span class="text-xs text-slate-400 block mb-1">現在の注文者設定</span>
+              <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-user text-cyan-400 text-sm"></i>
+                <span id="hero-user-name" class="font-bold text-slate-200">未設定</span>
+                <button onclick="openUserModal()" class="text-xs text-cyan-400 hover:underline ml-2">変更</button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- スクロールダウンインジケーター -->
-        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 text-xs text-slate-500">
-            <span>SCROLL DOWN</span>
-            <div class="w-5 h-8 border-2 border-slate-700 rounded-full p-1 flex justify-center">
-                <div class="w-1 h-2 bg-brand-cyan rounded-full animate-bounce"></div>
-            </div>
+        <!-- Product Grid Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+          <div>
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-box-open text-cyan-500"></i>発売中のアイテム
+            </h3>
+            <p class="text-slate-400 text-xs">ポイントでお得に入手可能なプロダクト、サービス一覧です。</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-slate-500">並び替え:</span>
+            <select id="sort-select" onchange="renderProducts()" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-cyan-500 text-slate-300">
+              <option value="newest">新着順</option>
+              <option value="price-asc">価格の安い順</option>
+              <option value="price-desc">価格の高い順</option>
+            </select>
+          </div>
         </div>
-    </section>
 
-    <!-- 企業理念 (ABOUT) -->
-    <section id="about" class="py-24 px-6 bg-brand-dark/40 relative">
-        <div class="max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                <!-- 左：テキスト（5カラム分） -->
-                <div class="lg:col-span-5 reveal">
-                    <span class="text-xs font-bold tracking-widest text-brand-cyan uppercase">01 / ABOUT US</span>
-                    <h2 class="text-3xl md:text-4xl font-extrabold mt-2 mb-6">常に「黎明」であり、<br>AIと共に歩むこと。</h2>
-                    <p class="text-slate-400 mb-6 leading-relaxed">
-                        変化の激しいデジタル社会において、私たちはコード生成、設計、デバッグ、検証の全フェーズにおいて**最先端AIを100%活用する「AI積極導入体制」**を構築しています。
-                    </p>
-                    <p class="text-slate-400 mb-8 leading-relaxed">
-                        AIによる爆発的な生産性と、経験豊富なエンジニアによる人間ならではの柔軟なクオリティコントロール。この2つが融合することで、他社を圧倒する「超高速な開発スピード」と「無駄のない軽量・堅牢なシステム」の両立を実現しています。
-                    </p>
-                </div>
-
-                <!-- 右：ビジュアル（7カラム分） -->
-                <div class="lg:col-span-7 grid grid-cols-2 gap-4 reveal" style="transition-delay: 200ms;">
-                    <div class="p-6 rounded-2xl bg-gradient-brand border border-white/5 hover:border-brand-blue/20 transition-all group">
-                        <div class="w-12 h-12 rounded-xl bg-brand-blue/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="sparkles" class="w-6 h-6 text-brand-blue"></i>
-                        </div>
-                        <h3 class="text-lg font-bold mb-2">全面的なAI積極活用</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">仕様策定からプログラミング、バグ検知、自動テストまで、全フローにAIを融合させています。</p>
-                    </div>
-
-                    <div class="p-6 rounded-2xl bg-gradient-brand border border-white/5 hover:border-brand-purple/20 transition-all mt-6 group">
-                        <div class="w-12 h-12 rounded-xl bg-brand-purple/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="zap" class="w-6 h-6 text-brand-purple"></i>
-                        </div>
-                        <h3 class="text-lg font-bold mb-2">驚異的な軽量化</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">無駄なフレームワークや肥大化したライブラリを徹底排除し、スマートで高速なコードを設計します。</p>
-                    </div>
-
-                    <div class="p-6 rounded-2xl bg-gradient-brand border border-white/5 hover:border-brand-cyan/20 transition-all group">
-                        <div class="w-12 h-12 rounded-xl bg-brand-cyan/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="rocket" class="w-6 h-6 text-brand-cyan"></i>
-                        </div>
-                        <h3 class="text-lg font-bold mb-2">圧倒的な機動力</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">AI駆動のアジャイル開発により、驚異的なスピードで試作から本開発まで完遂します。</p>
-                    </div>
-
-                    <div class="p-6 rounded-2xl bg-gradient-brand border border-white/5 hover:border-white/10 transition-all mt-6 group">
-                        <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="swatchbook" class="w-6 h-6 text-slate-300"></i>
-                        </div>
-                        <h3 class="text-lg font-bold mb-2">遊び心あるゲーム開発</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">ただのシステム屋に留まらず、WebゲームやRobloxなどエンタメ領域でも最高の体験を創出します。</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Products List Empty State -->
+        <div id="shop-empty-state" class="hidden text-center py-16 bg-slate-950/40 rounded-2xl border border-slate-800/60">
+          <i class="fa-solid fa-shop-slash text-slate-600 text-5xl mb-4"></i>
+          <h4 class="text-lg font-bold text-slate-400">現在、販売中の商品はありません</h4>
+          <p class="text-slate-500 text-sm mt-1">管理画面から新商品を登録してください。</p>
         </div>
-    </section>
 
-    <!-- 事業内容 (SERVICES) -->
-    <section id="services" class="py-24 px-6 relative">
-        <div class="max-w-6xl mx-auto">
-            <div class="text-center max-w-2xl mx-auto mb-16 reveal">
-                <span class="text-xs font-bold tracking-widest text-brand-cyan uppercase">02 / SERVICES</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold mt-2 mb-4">黎明システムズの提供サービス</h2>
-                <p class="text-slate-400">AI開発フローと職人技術を組み合わせ、個性的かつ超高品質なプロダクトをご提供します。</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                <!-- サービス1: 時計アプリ.exe -->
-                <div class="p-8 rounded-2xl bg-brand-dark/50 border border-white/5 hover:border-brand-blue/30 transition-all duration-300 flex flex-col justify-between group reveal">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-brand-blue/10 flex items-center justify-center mb-8 text-brand-blue group-hover:scale-110 transition-transform">
-                            <i data-lucide="clock" class="w-8 h-8"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4 text-white">高速・超軽量時計アプリ (.exe)</h3>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
-                            ミリ秒以下で起動する「高速スタートアップ」と、メモリやCPU負荷を極限まで抑えた「超軽量設計」を両立した、Windowsデスクトップ専用の時計アプリケーション（.exe）をご提供します。
-                        </p>
-                    </div>
-                    <ul class="space-y-2 border-t border-white/5 pt-4">
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-blue"></i> 高速スタートアップ（瞬時起動）</li>
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-blue"></i> PCのスペックを選ばない超省リソース設計</li>
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-blue"></i> デスクトップに馴染む洗練されたミニマルUI</li>
-                    </ul>
-                </div>
-
-                <!-- サービス2: Discord Bot -->
-                <div class="p-8 rounded-2xl bg-brand-dark/50 border border-white/5 hover:border-brand-purple/30 transition-all duration-300 flex flex-col justify-between group reveal">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-brand-purple/10 flex items-center justify-center mb-8 text-brand-purple group-hover:scale-110 transition-transform">
-                            <i data-lucide="message-square" class="w-8 h-8"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4 text-white">Discord Bot 制作・開発</h3>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
-                            Discordサーバーの管理自動化、ユーザー対応、外部データベースとの連携など、サーバー運用を大幅に効率化する高性能かつ安定したDiscord Botの受託開発を行います。
-                        </p>
-                    </div>
-                    <ul class="space-y-2 border-t border-white/5 pt-4">
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-purple"></i> サーバー荒らし対策・自動ロール付与</li>
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-purple"></i> Geminiや独自AIモデルを連携した対話型Bot</li>
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-purple"></i> 24時間365日止まらない強固な常時監視サーバーでの運用</li>
-                    </ul>
-                </div>
-
-                <!-- サービス3: ウェブゲーム -->
-                <div class="p-8 rounded-2xl bg-brand-dark/50 border border-white/5 hover:border-brand-cyan/30 transition-all duration-300 flex flex-col justify-between group reveal">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-brand-cyan/10 flex items-center justify-center mb-8 text-brand-cyan group-hover:scale-110 transition-transform">
-                            <i data-lucide="gamepad-2" class="w-8 h-8"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4 text-white">ウェブゲーム (HTML5) 作成</h3>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
-                            ダウンロードやインストールを必要とせず、ブラウザを開くだけでPC・スマートフォン問わず一瞬でプレイできる高品質なウェブゲームを開発します。
-                        </p>
-                    </div>
-                    <ul class="space-y-2 border-t border-white/5 pt-4">
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-cyan"></i> HTML5/Canvas/WebGLによる滑らかな描画性能</li>
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-cyan"></i> シンプルなカジュアルゲームからリアルタイム対戦まで</li>
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-cyan"></i> SNS等への高い拡散性・親和性</li>
-                    </ul>
-                </div>
-
-                <!-- サービス4: Roblox -->
-                <div class="p-8 rounded-2xl bg-brand-dark/50 border border-white/5 hover:border-emerald-500/30 transition-all duration-300 flex flex-col justify-between group reveal">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-8 text-emerald-400 group-hover:scale-110 transition-transform">
-                            <i data-lucide="cuboid" class="w-8 h-8"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4 text-white">Roblox ゲーム制作</h3>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
-                            世界中で爆発的な人気を誇るプラットフォーム「Roblox」内で動作する3Dマルチプレイヤーゲームを企画からプログラミング、アセットデザインまで一貫して制作します。
-                        </p>
-                    </div>
-                    <ul class="space-y-2 border-t border-white/5 pt-4">
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="text-emerald-400 w-3.5 h-3.5"></i> Lua言語を駆使した高度なアクション・システム設計</li>
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="text-emerald-400 w-3.5 h-3.5"></i> メタバース空間内での集客・マネタイズ機能設計</li>
-                        <li class="flex items-center gap-2 text-xs text-slate-500"><i data-lucide="check" class="text-emerald-400 w-3.5 h-3.5"></i> スマホ・PC・VRなどマルチプラットフォーム自動対応</li>
-                    </ul>
-                </div>
-            </div>
+        <!-- Product Grid -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Dynamic Products Go Here -->
         </div>
-    </section>
+      </section>
 
-    <!-- 特徴・強み (FEATURES) -->
-    <section id="features" class="py-24 px-6 bg-brand-dark/30 border-y border-white/5 relative">
-        <div class="max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <!-- 左：ビジュアル（リッチな情報提示） -->
-                <div class="space-y-6 order-2 lg:order-1 reveal">
-                    <div class="p-6 rounded-2xl bg-brand-black border border-white/5 flex items-start gap-4">
-                        <div class="p-3 rounded-lg bg-emerald-500/10 text-emerald-400">
-                            <i data-lucide="bot" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold mb-1">開発全体にAIを100%積極導入</h4>
-                            <p class="text-sm text-slate-400">すべてのプロトタイピング、コーディング、動作試験にAIアシスタントを組み込み、納期とコストを劇的に最適化しています。</p>
-                        </div>
-                    </div>
-
-                    <div class="p-6 rounded-2xl bg-brand-black border border-white/5 flex items-start gap-4">
-                        <div class="p-3 rounded-lg bg-orange-500/10 text-orange-400">
-                            <i data-lucide="activity" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold mb-1">コードレベルの無駄排除・最適化</h4>
-                            <p class="text-sm text-slate-400">時計アプリに代表される「軽量・サクサク動くこと」へのこだわり。ユーザーを待たせない快適性を最優先にします。</p>
-                        </div>
-                    </div>
-
-                    <div class="p-6 rounded-2xl bg-brand-black border border-white/5 flex items-start gap-4">
-                        <div class="p-3 rounded-lg bg-pink-500/10 text-pink-400">
-                            <i data-lucide="users" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold mb-1">Roblox & Discord などの現代文化対応</h4>
-                            <p class="text-sm text-slate-400">メタバースやコミュニケーションツールなど、若者層・現代ユーザーに確実に刺さるプラットフォームで高い開発実績があります。</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 右：テキスト -->
-                <div class="space-y-6 order-1 lg:order-2 reveal" style="transition-delay: 200ms;">
-                    <span class="text-xs font-bold tracking-widest text-brand-cyan uppercase">03 / WHY CHOOSE US</span>
-                    <h2 class="text-3xl md:text-4xl font-extrabold">私たちは「AIの速度」と「驚きの軽さ」で価値を創ります。</h2>
-                    <p class="text-slate-400 leading-relaxed">
-                        スマートフォンの普及やマシンスペックの向上に甘え、昨今のシステムやゲームは肥大化する一方です。私たちは「いかに速く起動するか」「いかにPCやシステムに負荷をかけないか」を愚直に突き詰め、ユーザー体験を根本から向上させます。
-                    </p>
-                    <div class="pt-6 border-t border-white/5 grid grid-cols-2 gap-6">
-                        <div>
-                            <span class="text-4xl font-black text-brand-blue tracking-tight">Active</span>
-                            <p class="text-xs text-slate-500 mt-1">100% AIコラボレーション設計</p>
-                        </div>
-                        <div>
-                            <span class="text-4xl font-black text-brand-cyan tracking-tight">Zero</span>
-                            <p class="text-xs text-slate-500 mt-1">無駄なリソース待機の排除</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- AI 技術相談チャットボット (AI CONSULTING) -->
-    <section id="chat" class="py-24 px-6 relative bg-brand-dark/10">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center max-w-2xl mx-auto mb-12 reveal">
-                <span class="text-xs font-bold tracking-widest text-brand-cyan uppercase">04 / AI CHAT CONSULTING</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold mt-2 mb-4">AI技術顧問「Rei」に今すぐ相談</h2>
-                <p class="text-slate-400 text-sm">軽量アプリ開発、Discord Botのアイデア、Robloxやウェブゲームの企画など、AIの「Rei」が瞬時にお答えします。お気軽にお声掛けください！</p>
-            </div>
-
-            <!-- チャットウインドウ -->
-            <div class="rounded-2xl border border-white/10 bg-brand-dark/60 backdrop-blur-md overflow-hidden shadow-2xl flex flex-col h-[580px] reveal">
-                <!-- チャットヘッダー -->
-                <div class="bg-brand-black/80 px-6 py-4 border-b border-white/10 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="relative w-9 h-9 rounded-full bg-gradient-to-r from-brand-blue to-brand-cyan p-[1px]">
-                            <div class="w-full h-full bg-brand-black rounded-full flex items-center justify-center">
-                                <i data-lucide="bot" class="w-4 h-4 text-brand-cyan" id="botIconHeader"></i>
-                            </div>
-                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-amber-500 border-2 border-brand-black rounded-full" id="statusDot"></span>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-white leading-none">Rei @ AI Technical Advisor</h4>
-                            <span class="text-[10px] text-slate-500" id="statusText">Key Required | Powered by Gemini 2.5</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <button id="toggleSettingsBtn" class="text-slate-400 hover:text-white transition-colors relative" title="Gemini APIキー設定">
-                            <i data-lucide="settings" class="w-4 h-4"></i>
-                            <span class="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full animate-ping" id="settingsAlertDot"></span>
-                        </button>
-                        <button id="clearChatBtn" class="text-slate-500 hover:text-slate-300 transition-colors" title="チャット履歴を消去">
-                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- APIキー設定ドロワー (アコーディオン) -->
-                <div id="settingsDrawer" class="bg-brand-black/90 border-b border-white/10 px-6 py-4 transition-all duration-300">
-                    <div class="max-w-2xl mx-auto">
-                        <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider flex items-center gap-1.5">
-                            <i data-lucide="key" class="w-3.5 h-3.5 text-brand-cyan"></i>
-                            Gemini APIキーの登録
-                        </label>
-                        <div class="flex gap-2">
-                            <div class="relative flex-1">
-                                <input type="password" id="apiKeyInput" placeholder="AI Studioで取得したAPIキー (AIzaSy...)"
-                                       class="w-full bg-white/5 border border-white/10 rounded-xl pl-4 pr-10 py-2.5 text-xs focus:outline-none focus:border-brand-cyan text-white transition-colors">
-                                <button type="button" id="toggleMaskBtn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-300">
-                                    <i data-lucide="eye" class="w-4 h-4" id="eyeIcon"></i>
-                                </button>
-                            </div>
-                            <button id="saveKeyBtn" class="px-5 py-2.5 bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-bold text-xs rounded-xl hover:opacity-90 active:scale-95 transition-all">
-                                保存
-                            </button>
-                        </div>
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mt-2.5">
-                            <p class="text-[10px] text-slate-500">
-                                ※キーはブラウザに安全にのみ保存され、開発者を含むいかなる第三者にも送信されません。
-                            </p>
-                            <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" class="text-[10px] text-brand-cyan hover:underline flex items-center gap-0.5 font-semibold">
-                                無料でAPIキーを取得する (Google AI Studio) <i data-lucide="external-link" class="w-3 h-3"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- メッセージ表示エリア -->
-                <div id="chatMessages" class="flex-1 p-6 overflow-y-auto space-y-4 text-sm scroll-smooth">
-                    <!-- APIキー警告通知 (未登録時のみ表示) -->
-                    <div id="apiKeyWarning" class="p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 text-amber-300 text-xs flex flex-col gap-2">
-                        <div class="flex items-center gap-2 font-bold">
-                            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400 animate-pulse"></i>
-                            <span>Gemini APIキーが設定されていません</span>
-                        </div>
-                        <p class="text-slate-400 leading-relaxed">
-                            このチャットボットは、GitHubでの公開用に開発者の秘密キーを埋め込まないよう設計されています。
-                            お手数ですが、右上の<strong class="text-white">設定アイコン（歯車）</strong>をクリックし、お客様ご自身のAPIキーをご登録ください。
-                        </p>
-                    </div>
-
-                    <!-- AI初期メッセージ -->
-                    <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-                            <i data-lucide="bot" class="w-4 h-4 text-brand-cyan"></i>
-                        </div>
-                        <div class="bg-white/5 text-slate-300 px-4 py-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed">
-                            はじめまして！reimei systems（黎明システムズ）のAI技術顧問「Rei（レイ）」です。
-                            <br><br>
-                            「Discord Botでこんな機能作れる？」「Robloxでゲームを作りたい」「時計アプリってどのくらい軽いの？」など、気になることがあればどんなことでも聞いてくださいね！
-                        </div>
-                    </div>
-                </div>
-
-                <!-- チャット入力エリア -->
-                <form id="chatForm" class="p-4 bg-brand-black/40 border-t border-white/10 flex items-center gap-2">
-                    <input type="text" id="chatInput" placeholder="メッセージを入力してください..." required
-                           class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan transition-colors text-white">
-                    <button type="submit" id="sendBtn" class="p-3 bg-gradient-to-r from-brand-blue to-brand-cyan hover:opacity-90 active:scale-95 transition-all text-white rounded-xl flex items-center justify-center shrink-0">
-                        <i data-lucide="send" class="w-4 h-4"></i>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- フッター -->
-    <footer class="bg-brand-black py-12 px-6 border-t border-white/5">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 p-[1px]">
-                    <i data-lucide="compass" class="w-4 h-4 text-brand-cyan"></i>
-                </div>
-                <span class="font-bold text-sm text-white tracking-widest uppercase">reimei systems</span>
-            </div>
-            <p class="text-xs text-slate-600">&copy; 2026 reimei systems. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- 通知モーダル (アラート代替用) -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-        <div class="bg-brand-dark border border-brand-cyan/40 px-5 py-4 rounded-xl shadow-xl flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-brand-cyan/10 flex items-center justify-center text-brand-cyan">
-                <i data-lucide="check" class="w-5 h-5"></i>
+      <!-- ================= ADMIN TAB ================= -->
+      <section id="tab-admin" class="hidden space-y-8">
+        <!-- Admin Title -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-indigo-950/20 p-6 rounded-2xl border border-indigo-900/40">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-toolbox"></i>
             </div>
             <div>
-                <h5 class="text-xs font-bold text-white" id="toastTitle">システム通知</h5>
-                <p class="text-[10px] text-slate-400" id="toastMessage">処理が完了しました。</p>
+              <h2 class="text-xl font-bold text-indigo-200">黎明システム・管理室</h2>
+              <p class="text-xs text-slate-400">商品・在庫コントロール、注文・チャット、ポイント支給を行えます</p>
             </div>
+          </div>
+          <button onclick="logoutAdmin()" class="bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 px-4 py-2 rounded-xl transition text-xs font-semibold self-start sm:self-auto">
+            <i class="fa-solid fa-right-from-bracket mr-1"></i>管理モード終了
+          </button>
         </div>
+
+        <!-- Inner Admin Switch Tabs -->
+        <div class="flex border-b border-slate-800 overflow-x-auto whitespace-nowrap">
+          <button onclick="switchAdminSubTab('products')" id="btn-admin-sub-products" class="px-5 py-3 border-b-2 border-indigo-500 text-indigo-400 font-bold text-sm transition">
+            商品・在庫の管理
+          </button>
+          <button onclick="switchAdminSubTab('orders')" id="btn-admin-sub-orders" class="px-5 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-sm transition flex items-center gap-2">
+            注文履歴・ステータス
+            <span id="admin-orders-badge" class="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full hidden">0</span>
+          </button>
+          <button onclick="switchAdminSubTab('users')" id="btn-admin-sub-users" class="px-5 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-sm transition">
+            ポイント・メンバー管理
+          </button>
+          <button onclick="switchAdminSubTab('dm')" id="btn-admin-sub-dm" class="px-5 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-sm transition flex items-center gap-2">
+            問い合わせDM
+            <span id="admin-dm-badge" class="bg-cyan-500 text-slate-950 text-[10px] px-1.5 py-0.5 rounded-full hidden">0</span>
+          </button>
+          <button onclick="switchAdminSubTab('settings')" id="btn-admin-sub-settings" class="px-5 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-sm transition">
+            システム設定
+          </button>
+        </div>
+
+        <!-- SUB TAB: PRODUCTS MANAGEMENT -->
+        <div id="admin-sub-products" class="space-y-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-200">登録済みアイテム一覧</h3>
+            <button onclick="openProductModal()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+              <i class="fa-solid fa-plus"></i>
+              <span>新規アイテム追加</span>
+            </button>
+          </div>
+
+          <!-- Product Table for Desktop -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden hidden md:block">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-900 text-slate-400 text-xs font-semibold uppercase border-b border-slate-800">
+                <tr>
+                  <th class="px-6 py-4">商品画像・名前</th>
+                  <th class="px-6 py-4">価格 (税込)</th>
+                  <th class="px-6 py-4">ポイント支払いの可否</th>
+                  <th class="px-6 py-4">在庫状況</th>
+                  <th class="px-6 py-4">説明</th>
+                  <th class="px-6 py-4 text-right">アクション</th>
+                </tr>
+              </thead>
+              <tbody id="admin-product-table-body" class="divide-y divide-slate-800/60">
+                <!-- Dynamic Items -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Product List -->
+          <div id="admin-product-mobile-list" class="grid grid-cols-1 gap-4 md:hidden">
+            <!-- Dynamic Items for Mobile -->
+          </div>
+        </div>
+
+        <!-- SUB TAB: ORDER LOGS -->
+        <div id="admin-sub-orders" class="hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-slate-200">メンバーからの注文ログ</h3>
+              <p class="text-xs text-slate-400">届いたオーダー情報や、残金のお支払・お渡し状況をリアルタイムに管理できます</p>
+            </div>
+            <button onclick="clearAllOrders()" class="text-rose-400 hover:text-rose-300 text-xs flex items-center gap-1 bg-rose-950/20 px-3 py-1.5 rounded-lg border border-rose-900/30">
+              <i class="fa-solid fa-trash-can"></i>注文履歴を全削除
+            </button>
+          </div>
+
+          <!-- Orders Empty State -->
+          <div id="orders-empty-state" class="hidden text-center py-16 bg-slate-950/40 rounded-2xl border border-slate-800/60">
+            <i class="fa-solid fa-clipboard text-slate-600 text-5xl mb-4"></i>
+            <h4 class="text-lg font-bold text-slate-400">現在、注文履歴はありません</h4>
+            <p class="text-slate-500 text-sm mt-1">メンバーからの最初の一歩を待ちましょう！</p>
+          </div>
+
+          <!-- Orders Accordion Container -->
+          <div id="admin-orders-list" class="space-y-4">
+            <!-- Dynamic Order Cards -->
+          </div>
+        </div>
+
+        <!-- SUB TAB: USERS & POINTS MANAGEMENT -->
+        <div id="admin-sub-users" class="hidden space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-950 p-6 rounded-2xl border border-slate-800">
+            <div>
+              <h3 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-coins text-amber-400"></i>ポイント給付・メンバー一覧
+              </h3>
+              <p class="text-xs text-slate-400">身内アカウントのポイント確認や、一括・個別のpt付与が可能です。</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button onclick="distributeMonthlyPoints(100)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                <i class="fa-solid fa-rotate"></i>
+                <span>今月の100ptを全員に支給</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- User list empty state -->
+          <div id="admin-users-empty" class="text-center py-12 bg-slate-950/40 border border-slate-800 rounded-xl hidden">
+            <p class="text-slate-500 text-xs">現在登録されているメンバーはいません。</p>
+          </div>
+
+          <!-- Users points table -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-900 text-slate-400 text-xs font-semibold uppercase border-b border-slate-800">
+                <tr>
+                  <th class="px-6 py-4">ユーザーID / 名前</th>
+                  <th class="px-6 py-4">現在の所持ポイント</th>
+                  <th class="px-6 py-4 text-right">ポイント調整チャージ</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-table-body" class="divide-y divide-slate-800/60">
+                <!-- Dynamic user points -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUB TAB: ADMIN DM CHATS -->
+        <div id="admin-sub-dm" class="hidden space-y-6">
+          <div>
+            <h3 class="text-lg font-bold text-slate-200">ユーザーからの問い合わせチャット</h3>
+            <p class="text-xs text-slate-400">各メンバーから届いている個別のDM履歴を確認して返信ができます</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden min-h-[500px]">
+            <!-- Sidebar: Active Threads -->
+            <div class="border-r border-slate-800 p-4 space-y-3 bg-slate-950">
+              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">チャット一覧</h4>
+              <div id="admin-dm-threads" class="space-y-1">
+                <!-- Dynamic threads -->
+              </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="lg:col-span-2 flex flex-col justify-between bg-slate-900/40">
+              <!-- Chat Head -->
+              <div class="p-4 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
+                <div>
+                  <h4 id="admin-chat-target-name" class="font-bold text-sm text-slate-100">チャットを選択してください</h4>
+                  <span id="admin-chat-target-id" class="text-[10px] text-slate-500"></span>
+                </div>
+              </div>
+              <!-- Chat Messages -->
+              <div id="admin-chat-messages" class="flex-grow p-4 overflow-y-auto space-y-3 max-h-[350px]">
+                <div class="text-center py-12 text-slate-500 text-xs">
+                  左のリストからメンバーを選択すると、会話履歴がここに表示されます。
+                </div>
+              </div>
+              <!-- Chat Input -->
+              <div class="p-4 border-t border-slate-800 bg-slate-950/80">
+                <div class="flex space-x-2">
+                  <input type="text" id="admin-dm-input" disabled placeholder="メッセージを入力してください..." class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-slate-200">
+                  <button onclick="sendAdminDM()" id="admin-dm-send-btn" disabled class="bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-850 disabled:text-slate-650 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition">
+                    送信
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB TAB: SYSTEM SETTINGS -->
+        <div id="admin-sub-settings" class="hidden space-y-6 max-w-xl">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-6">
+            <h3 class="text-base font-bold text-slate-200 border-b border-slate-800 pb-3">システム基本設定 (リアルタイム同期)</h3>
+            
+            <!-- Code Setting 1: Admin Password -->
+            <div class="space-y-2">
+              <label class="block text-xs font-semibold text-slate-400">管理者コード (この管理室を開くための合言葉)</label>
+              <div class="flex space-x-2">
+                <input type="text" id="setting-admin-code" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 flex-grow" value="reimeiadmin">
+                <button onclick="saveAdminCodeSetting()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-xs font-bold border border-indigo-700 text-white">更新</button>
+              </div>
+              <p class="text-[11px] text-slate-500">※初期値は「reimeiadmin」です。</p>
+            </div>
+
+            <!-- Code Setting 2: Promo Code (Free-ify) -->
+            <div class="space-y-2">
+              <label class="block text-xs font-semibold text-slate-400">無料化コード (ユーザーが使うとタダになるコード)</label>
+              <div class="flex space-x-2">
+                <input type="text" id="setting-promo-code" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 flex-grow" value="REIMEIFREE">
+                <button onclick="savePromoCodeSetting()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-xs font-bold border border-indigo-700 text-white">更新</button>
+              </div>
+              <p class="text-[11px] text-slate-500">※この合言葉を注文画面で入力したユーザーは、合計金額が自動で 0円 に変更されます。</p>
+            </div>
+
+            <!-- Quick Preset Reset -->
+            <div class="border-t border-slate-800/80 pt-6 space-y-3">
+              <h4 class="text-xs font-bold text-rose-400 uppercase tracking-wider">ファクトリーリセット</h4>
+              <p class="text-xs text-slate-400">Firestoreのすべての商品データを、デフォルトのデモデータに初期化します。</p>
+              <button onclick="resetFirestoreData()" class="bg-rose-950/20 text-rose-300 hover:bg-rose-950/50 border border-rose-800/30 px-4 py-2 rounded-lg text-xs font-bold transition">
+                Firestoreをデモデータに初期化
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ================= MODALS & SLIDEOUT PANELS ================= -->
+
+  <!-- Modal: Product Details & Reviews -->
+  <div id="modal-product-details" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md hidden overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl p-6 relative shadow-2xl my-8 flex flex-col max-h-[90vh]">
+      <button onclick="closeProductDetailsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white z-10">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="overflow-y-auto space-y-6 pr-2">
+        <!-- Header Info -->
+        <div class="flex items-start gap-4">
+          <div id="detail-prod-icon-box" class="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center text-3xl shrink-0">
+            <i class="fa-solid fa-cube"></i>
+          </div>
+          <div class="space-y-1">
+            <h3 id="detail-prod-name" class="text-xl font-bold text-white">商品名</h3>
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="detail-prod-price" class="text-lg font-bold text-cyan-400">¥0</span>
+              <span id="detail-prod-stock-badge" class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-0.5 rounded-full font-bold border border-emerald-500/20">残り 0 個</span>
+              <span id="detail-prod-points-badge" class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-0.5 rounded-full font-bold border border-amber-500/20">ポイントOK</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">商品情報</h4>
+          <p id="detail-prod-desc" class="text-slate-300 text-sm bg-slate-950 border border-slate-800 p-4 rounded-xl leading-relaxed whitespace-pre-wrap">説明文</p>
+        </div>
+
+        <!-- Review Section -->
+        <div class="border-t border-slate-800 pt-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-star text-amber-400"></i>みんなのレビュー・評価
+            </h4>
+            <span id="detail-average-rating" class="text-xs font-bold text-slate-400 bg-slate-800 px-2.5 py-1 rounded-full">★ -- (0件の投稿)</span>
+          </div>
+
+          <!-- Add Review Form -->
+          <div class="bg-slate-950/60 border border-slate-800 p-4 rounded-xl space-y-3">
+            <h5 class="text-xs font-semibold text-slate-300">レビューを投稿する</h5>
+            
+            <div class="flex items-center space-x-3">
+              <span class="text-xs text-slate-400">星評価:</span>
+              <div class="flex space-x-1 text-lg text-slate-600">
+                <button type="button" onclick="setReviewRating(1)" class="review-star-btn hover:text-amber-400 transition" data-val="1"><i class="fa-solid fa-star"></i></button>
+                <button type="button" onclick="setReviewRating(2)" class="review-star-btn hover:text-amber-400 transition" data-val="2"><i class="fa-solid fa-star"></i></button>
+                <button type="button" onclick="setReviewRating(3)" class="review-star-btn hover:text-amber-400 transition" data-val="3"><i class="fa-solid fa-star"></i></button>
+                <button type="button" onclick="setReviewRating(4)" class="review-star-btn hover:text-amber-400 transition" data-val="4"><i class="fa-solid fa-star"></i></button>
+                <button type="button" onclick="setReviewRating(5)" class="review-star-btn hover:text-amber-400 transition" data-val="5"><i class="fa-solid fa-star"></i></button>
+              </div>
+              <input type="hidden" id="new-review-rating" value="5">
+            </div>
+
+            <div class="flex space-x-2">
+              <input type="text" id="new-review-comment" placeholder="身内のノリ大歓迎！コメントを入力してください..." class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500 text-slate-200">
+              <button onclick="submitReview()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition">投稿</button>
+            </div>
+          </div>
+
+          <!-- Reviews List -->
+          <div id="detail-reviews-list" class="space-y-2.5 max-h-[250px] overflow-y-auto">
+            <!-- Dynamic Reviews List -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button inside Detail -->
+      <div class="pt-4 border-t border-slate-800 flex justify-end gap-3 shrink-0">
+        <button onclick="closeProductDetailsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">閉じる</button>
+        <button id="detail-add-cart-btn" onclick="" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+          <i class="fa-solid fa-cart-plus"></i>カートに追加
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: User Profile Settings -->
+  <div id="modal-user" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 relative shadow-2xl">
+      <button onclick="closeUserModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <div class="text-center mb-6">
+        <div class="w-14 h-14 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full flex items-center justify-center text-2xl mx-auto mb-3">
+          <i class="fa-solid fa-user-gear"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white">あなたのニックネーム設定</h3>
+        <p class="text-xs text-slate-400 mt-1">注文を識別するためのお名前を設定してください</p>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1.5 font-medium">お名前（例: たろう、黎明の騎士）</label>
+          <input type="text" id="user-name-input" placeholder="ゲストユーザー" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 text-slate-200">
+        </div>
+        <button onclick="saveUserProfile()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-xl transition text-sm">
+          設定を保存する
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Admin Authentication -->
+  <div id="modal-admin-auth" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 relative shadow-2xl">
+      <button onclick="closeAdminAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <div class="text-center mb-5">
+        <div class="w-14 h-14 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full flex items-center justify-center text-2xl mx-auto mb-3">
+          <i class="fa-solid fa-key"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white">管理モード認証</h3>
+        <p class="text-xs text-slate-400 mt-1">管理者コードを入力してください</p>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <input type="password" id="admin-pass-input" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-center text-lg tracking-widest focus:outline-none focus:border-indigo-500 text-slate-200">
+          <p class="text-[10px] text-slate-500 text-center mt-1.5">※初期コードは「reimeiadmin」です</p>
+        </div>
+        <button onclick="authAdmin()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition text-sm">
+          認証する
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add/Edit Product -->
+  <div id="modal-product" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 relative shadow-2xl my-8">
+      <button onclick="closeProductModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <div class="mb-5">
+        <h3 id="product-modal-title" class="text-lg font-bold text-white">新規アイテムの登録</h3>
+        <p class="text-xs text-slate-400 mt-0.5">ショップに並べる新しい商品を定義します</p>
+      </div>
+      
+      <input type="hidden" id="edit-product-id">
+      
+      <div class="space-y-4">
+        <!-- Name -->
+        <div>
+          <label class="block text-xs text-slate-400 mb-1 font-medium">アイテム名 *</label>
+          <input type="text" id="prod-name" placeholder="例: 黎明特製ステッカー" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+        </div>
+        <!-- Price & Stock -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1 font-medium">価格 (円) *</label>
+            <input type="number" id="prod-price" placeholder="500" min="0" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1 font-medium">初期在庫数 *</label>
+            <input type="number" id="prod-stock" placeholder="10" min="0" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+          </div>
+        </div>
+        <!-- Point settings -->
+        <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <label class="block text-xs font-bold text-slate-200">ポイント支払いを可能にする</label>
+            <p class="text-[10px] text-slate-450 mt-0.5">ONにすると、ユーザーが黎明ptでお買い物可能になります</p>
+          </div>
+          <input type="checkbox" id="prod-points-eligible" checked class="w-5 h-5 accent-cyan-500 rounded cursor-pointer">
+        </div>
+        <!-- Description -->
+        <div>
+          <label class="block text-xs text-slate-400 mb-1 font-medium">アイテム説明</label>
+          <textarea id="prod-desc" rows="3" placeholder="商品の詳細や、受け渡し方法などを記載してください。" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"></textarea>
+        </div>
+        <!-- Preset Image Selector -->
+        <div>
+          <label class="block text-xs text-slate-400 mb-2 font-medium">アイコンイメージ選択</label>
+          <div class="grid grid-cols-6 gap-2">
+            <button onclick="selectPresetIcon('fa-cube')" class="icon-preset-btn p-3 bg-slate-950 border-2 border-transparent hover:border-slate-700 rounded-xl text-center text-slate-300 hover:text-white text-lg transition" data-icon="fa-cube">
+              <i class="fa-solid fa-cube"></i>
+            </button>
+            <button onclick="selectPresetIcon('fa-ticket')" class="icon-preset-btn p-3 bg-slate-950 border-2 border-transparent hover:border-slate-700 rounded-xl text-center text-slate-300 hover:text-white text-lg transition" data-icon="fa-ticket">
+              <i class="fa-solid fa-ticket"></i>
+            </button>
+            <button onclick="selectPresetIcon('fa-mug-hot')" class="icon-preset-btn p-3 bg-slate-950 border-2 border-transparent hover:border-slate-700 rounded-xl text-center text-slate-300 hover:text-white text-lg transition" data-icon="fa-mug-hot">
+              <i class="fa-solid fa-mug-hot"></i>
+            </button>
+            <button onclick="selectPresetIcon('fa-shirt')" class="icon-preset-btn p-3 bg-slate-950 border-2 border-transparent hover:border-slate-700 rounded-xl text-center text-slate-300 hover:text-white text-lg transition" data-icon="fa-shirt">
+              <i class="fa-solid fa-shirt"></i>
+            </button>
+            <button onclick="selectPresetIcon('fa-key')" class="icon-preset-btn p-3 bg-slate-950 border-2 border-transparent hover:border-slate-700 rounded-xl text-center text-slate-300 hover:text-white text-lg transition" data-icon="fa-key">
+              <i class="fa-solid fa-key"></i>
+            </button>
+            <button onclick="selectPresetIcon('fa-gamepad')" class="icon-preset-btn p-3 bg-slate-950 border-2 border-transparent hover:border-slate-700 rounded-xl text-center text-slate-300 hover:text-white text-lg transition" data-icon="fa-gamepad">
+              <i class="fa-solid fa-gamepad"></i>
+            </button>
+          </div>
+          <input type="hidden" id="prod-icon" value="fa-cube">
+        </div>
+
+        <button onclick="saveProduct()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-xl transition text-sm">
+          商品を保存する
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slideout: User DM Panel -->
+  <div id="dm-drawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-slate-950 border-l border-slate-800 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-out">
+    <!-- Header -->
+    <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+      <h3 class="text-lg font-bold text-white flex items-center gap-2">
+        <i class="fa-solid fa-comments text-cyan-400"></i>管理者宛てダイレクトメッセージ
+      </h3>
+      <button onclick="toggleDMDrawer()" class="text-slate-400 hover:text-white p-1">
+        <i class="fa-solid fa-chevron-right text-lg"></i>
+      </button>
     </div>
 
-    <!-- JavaScript & API 連携処理 -->
-    <script>
-        // Lucideアイコンの初期化
-        lucide.createIcons();
+    <!-- Info message -->
+    <div class="bg-indigo-950/40 border-b border-indigo-900/40 px-6 py-2.5 text-[11px] text-indigo-300">
+      注文の受け渡し方法や、お支払いに関して管理者と1対1で直接チャット相談ができます。
+    </div>
 
-        /* ==========================================================================
-           1. パーティクル背景アニメーション
-           ========================================================================== */
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
+    <!-- Messages Container -->
+    <div id="user-dm-messages" class="flex-grow overflow-y-auto p-6 space-y-3 bg-slate-950/60">
+      <!-- Dynamic messages inside -->
+    </div>
 
-        let particles = [];
-        const particleCount = 60;
+    <!-- Input Section -->
+    <div class="p-4 border-t border-slate-800 bg-slate-900/60 space-y-3">
+      <div class="flex space-x-2">
+        <input type="text" id="user-dm-input" placeholder="メッセージを入力してください..." class="flex-grow bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-cyan-500 text-slate-200">
+        <button onclick="sendUserDM()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-4 py-2 rounded-lg text-xs font-bold transition">送信</button>
+      </div>
+    </div>
+  </div>
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles();
+  <!-- Slideout: Cart Panel -->
+  <div id="cart-drawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-slate-950 border-l border-slate-800 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-out">
+    <!-- Header -->
+    <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+      <h3 class="text-lg font-bold text-white flex items-center gap-2">
+        <i class="fa-solid fa-shopping-cart text-cyan-400"></i>ショッピングカート
+      </h3>
+      <button onclick="toggleCart()" class="text-slate-400 hover:text-white p-1">
+        <i class="fa-solid fa-chevron-right text-lg"></i>
+      </button>
+    </div>
+
+    <!-- User Name Warning in Cart -->
+    <div id="cart-user-warning" class="bg-amber-950/30 border-b border-amber-800/40 px-6 py-2.5 text-xs text-amber-300 flex items-center justify-between">
+      <span>お名前を登録してください（匿名では購入できません）</span>
+      <button onclick="openUserModal()" class="underline font-bold hover:text-amber-200">設定</button>
+    </div>
+
+    <!-- Items List -->
+    <div id="cart-items-container" class="flex-grow overflow-y-auto p-6 space-y-4">
+      <!-- Dynamic Cart Items -->
+    </div>
+
+    <!-- Promo Code & Total -->
+    <div class="p-6 border-t border-slate-800 bg-slate-900/60 space-y-4">
+      <!-- Promo Code Entry -->
+      <div class="space-y-1.5">
+        <label class="block text-[11px] text-slate-400 font-semibold tracking-wider uppercase">指定コード (無料化コード)</label>
+        <div class="flex space-x-2">
+          <input type="text" id="promo-input" placeholder="コードをお持ちですか？" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-cyan-500 text-slate-200 uppercase">
+          <button onclick="applyPromoCode()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-lg text-xs font-bold transition">適用</button>
+        </div>
+        <div id="promo-status" class="text-[11px] hidden"></div>
+      </div>
+
+      <!-- Pricing Summary & Point Calculation -->
+      <div class="space-y-2 pt-2 border-t border-slate-800/60 text-xs">
+        <!-- Subtotal -->
+        <div class="flex justify-between text-slate-400">
+          <span>カート内合計</span>
+          <span id="cart-subtotal">¥0</span>
+        </div>
+        <!-- Eligible for points info -->
+        <div class="flex justify-between text-slate-400">
+          <span>ポイント適用対象商品</span>
+          <span id="cart-points-eligible">¥0</span>
+        </div>
+        <!-- Point usage deduction -->
+        <div class="flex justify-between text-amber-400">
+          <span>ポイント支払い利用</span>
+          <span id="cart-points-used">-0 pt</span>
+        </div>
+        <!-- Promo discount (if REIMEIFREE) -->
+        <div id="cart-discount-row" class="flex justify-between text-emerald-400 hidden">
+          <span>コード値引き (100%OFF)</span>
+          <span id="cart-discount">-¥0</span>
+        </div>
+        <!-- Final Cash payable -->
+        <div class="flex justify-between text-sm font-bold text-white border-t border-slate-800/80 pt-2">
+          <span>お支払い残高 (現地現金払い分)</span>
+          <span id="cart-total" class="text-cyan-400 text-lg">¥0</span>
+        </div>
+      </div>
+
+      <!-- Submit Order Button -->
+      <button id="checkout-btn" onclick="submitOrder()" class="w-full bg-cyan-500 hover:bg-cyan-400 disabled:bg-slate-800 disabled:text-slate-650 disabled:cursor-not-allowed text-slate-950 font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center space-x-2 shadow-lg shadow-cyan-500/10">
+        <i class="fa-solid fa-paper-plane"></i>
+        <span>注文を確定する (現地支払い)</span>
+      </button>
+      <p class="text-[10px] text-slate-500 text-center mt-2">
+        ※ クレジットカード決済などは一切発生しません。ポイント残高を消費したのち、はみ出したお支払い残高が現金清算分として管理者にリアルタイムで登録されます。
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-slate-950 border-t border-slate-800 mt-16 py-8">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span class="text-xs text-slate-500">© 2026 黎明システム Official. Powered by Firebase Firestore.</span>
+      </div>
+      <div class="flex items-center space-x-4 text-xs text-slate-400">
+        <span class="hover:text-cyan-400 cursor-pointer" onclick="switchTab('shop')">ショップ</span>
+        <span class="hover:text-cyan-400 cursor-pointer" onclick="openAdminAuthModal()">管理パネル</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      doc, 
+      setDoc, 
+      getDoc, 
+      addDoc, 
+      updateDoc, 
+      deleteDoc, 
+      onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- Firebase Config (ゲーム用プロジェクト情報) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyConva0-yx5nNix7GfwmJBaGm3xKUtSDdk",
+      authDomain: "game-f87b6.firebaseapp.com",
+      projectId: "game-f87b6",
+      storageBucket: "game-f87b6.firebasestorage.app",
+      messagingSenderId: "436007220199",
+      appId: "1:436007220199:web:9c0a35272af2e96d028342"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'reimei-shop';
+
+    // --- State Storage Key Definitions ---
+    const DB_KEYS = {
+      PRODUCTS: "reimei_shop_products_v1",
+      ORDERS: "reimei_shop_orders_v1",
+      USER: "reimei_shop_current_user_v1",
+      ADMIN_CODE: "reimei_shop_admin_code_v1",
+      PROMO_CODE: "reimei_shop_promo_code_v1"
+    };
+
+    // --- In-Memory State Variables ---
+    let products = [];
+    let orders = [];
+    let reviews = [];
+    let dmMessages = [];
+    let userPointsList = []; // Array of { userId, userName, points } from DB
+    let cart = {}; // format: { productId: quantity }
+    
+    let currentUser = "ゲスト";
+    let currentUserId = "anonymous";
+    let currentUserPoints = 0; // Current active user's points
+    let adminCode = "reimeiadmin";
+    let promoCode = "REIMEIFREE";
+    
+    let currentTab = "shop";
+    let currentAdminSubTab = "products";
+    let isAdminAuthenticated = false;
+    let isPromoApplied = false;
+
+    // Detail modal items
+    let activeDetailProdId = null;
+    let selectedRating = 5;
+
+    // Admin Chat active thread id
+    let adminActiveThreadUserId = null;
+
+    // Default Products presets for fresh setup
+    const DEFAULT_PRODUCTS = [
+      {
+        id: "prod-1",
+        name: "黎明公式ギガブレッド",
+        price: 350,
+        stock: 5,
+        desc: "黎明システム開発合宿で必須となるカロリー超高濃度ブリーフフード。直接手渡し可能です。",
+        icon: "fa-cube",
+        pointsEligible: true // ポイント購入可能
+      },
+      {
+        id: "prod-2",
+        name: "開発アシストバウチャー (1回分)",
+        price: 1500,
+        stock: 10,
+        desc: "黎明システム幹部が1時間マンツーマンであなたの開発を技術サポートする特別チケット。",
+        icon: "fa-ticket",
+        pointsEligible: false // 高級なためポイント購入不可
+      },
+      {
+        id: "prod-3",
+        name: "特注メンバーシップマグカップ",
+        price: 1200,
+        stock: 2,
+        desc: "黎明ロゴが刻印された漆黒のセラミックマグカップ。コーヒーをおかわりし放題。",
+        icon: "fa-mug-hot",
+        pointsEligible: true // ポイント購入可能
+      }
+    ];
+
+    // --- DOM Event Bindings & Helpers (グローバル関数登録) ---
+    window.switchTab = switchTab;
+    window.switchAdminSubTab = switchAdminSubTab;
+    window.openUserModal = openUserModal;
+    window.closeUserModal = closeUserModal;
+    window.saveUserProfile = saveUserProfile;
+    window.openAdminAuthModal = openAdminAuthModal;
+    window.closeAdminAuthModal = closeAdminAuthModal;
+    window.authAdmin = authAdmin;
+    window.logoutAdmin = logoutAdmin;
+    window.addToCart = addToCart;
+    window.changeCartQty = changeCartQty;
+    window.toggleCart = toggleCart;
+    window.applyPromoCode = applyPromoCode;
+    window.submitOrder = submitOrder;
+    window.openProductModal = openProductModal;
+    window.closeProductModal = closeProductModal;
+    window.saveProduct = saveProduct;
+    window.updateDirectStock = updateDirectStock;
+    window.deleteProduct = deleteProduct;
+    window.confirmDeleteProduct = confirmDeleteProduct;
+    window.clearAllOrders = clearAllOrders;
+    window.confirmClearAllOrders = confirmClearAllOrders;
+    window.deleteSingleOrder = deleteSingleOrder;
+    window.updateOrderStatus = updateOrderStatus;
+    window.distributeMonthlyPoints = distributeMonthlyPoints;
+    window.chargeUserPoints = chargeUserPoints;
+    window.saveAdminCodeSetting = saveAdminCodeSetting;
+    window.savePromoCodeSetting = savePromoCodeSetting;
+    window.resetFirestoreData = resetFirestoreData;
+    window.selectPresetIcon = selectPresetIcon;
+    window.openProductDetailsModal = openProductDetailsModal;
+    window.closeProductDetailsModal = closeProductDetailsModal;
+    window.setReviewRating = setReviewRating;
+    window.submitReview = submitReview;
+    window.openDMDrawer = openDMDrawer;
+    window.toggleDMDrawer = toggleDMDrawer;
+    window.sendUserDM = sendUserDM;
+    window.selectAdminChatThread = selectAdminChatThread;
+    window.sendAdminDM = sendAdminDM;
+
+    // --- Auth Init ---
+    const initAuth = async () => {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.error("Authentication Error: ", err);
+      }
+    };
+    initAuth();
+
+    onAuthStateChanged(auth, (userState) => {
+      if (userState) {
+        currentUserId = userState.uid;
+        
+        // Restore local profile name if exists
+        const storedUser = localStorage.getItem(DB_KEYS.USER);
+        currentUser = storedUser ? storedUser : "ゲスト-" + currentUserId.substring(0, 5);
+        
+        renderAll();
+        // Start listening to Firestore once auth is complete (RULE 3)
+        startFirestoreListeners();
+      }
+    });
+
+    // --- Realtime Firestore Observers ---
+    function startFirestoreListeners() {
+      if (!auth.currentUser) return;
+
+      // 1. Products Sync
+      const prodCollection = collection(db, 'artifacts', appId, 'public', 'data', 'products');
+      onSnapshot(prodCollection, (snapshot) => {
+        const prodList = [];
+        snapshot.forEach((doc) => {
+          prodList.push({ id: doc.id, ...doc.data() });
+        });
+        
+        if (prodList.length === 0) {
+          seedInitialFirestoreProducts();
+        } else {
+          products = prodList;
+          renderProducts();
+          if (isAdminAuthenticated && currentAdminSubTab === 'products') {
+            renderAdminProducts();
+          }
+          if (activeDetailProdId) {
+            updateProductDetailModalContent();
+          }
+        }
+      }, (error) => {
+        console.error("Firestore Products Listener Error: ", error);
+      });
+
+      // 2. Orders Sync
+      const ordersCollection = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+      onSnapshot(ordersCollection, (snapshot) => {
+        const orderList = [];
+        snapshot.forEach((doc) => {
+          orderList.push({ id: doc.id, ...doc.data() });
+        });
+        orders = orderList;
+        
+        // Render updates to active admin views
+        const badge = document.getElementById('admin-orders-badge');
+        if (orders.length > 0) {
+          badge.innerText = orders.length;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
         }
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.4;
-                this.speedY = (Math.random() - 0.5) * 0.4;
-                this.color = Math.random() > 0.5 ? 'rgba(59, 130, 246, 0.4)' : 'rgba(6, 182, 212, 0.4)';
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+        if (isAdminAuthenticated && currentAdminSubTab === 'orders') {
+          renderAdminOrders();
+        }
+      }, (error) => {
+        console.error("Firestore Orders Listener Error: ", error);
+      });
 
-                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-            }
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+      // 3. User Points Sync
+      const pointsCollection = collection(db, 'artifacts', appId, 'public', 'data', 'user_points');
+      onSnapshot(pointsCollection, (snapshot) => {
+        const list = [];
+        snapshot.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        userPointsList = list;
+
+        // Sync Current user's points
+        const myPointsObj = list.find(u => u.id === currentUserId);
+        if (myPointsObj) {
+          currentUserPoints = myPointsObj.points;
+        } else {
+          // Setup initial default points (100pt) for new user
+          currentUserPoints = 100;
+          setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_points', currentUserId), {
+            userId: currentUserId,
+            userName: currentUser,
+            points: 100
+          });
         }
 
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
+        // Render point stats inside headers & hero
+        document.getElementById('header-user-points').innerText = currentUserPoints;
+        document.getElementById('hero-user-points').innerText = currentUserPoints;
+        
+        renderCart(); // Refresh points calculations in cart drawer if open
+        if (isAdminAuthenticated && currentAdminSubTab === 'users') {
+          renderAdminUsersPoints();
         }
+      });
 
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            // 近い粒子同士を線で繋ぐ
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 120) {
-                        ctx.strokeStyle = `rgba(59, 130, 246, ${0.1 - dist / 1200})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
+      // 4. Settings (Codes) Sync
+      const settingsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config');
+      onSnapshot(settingsDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          adminCode = data.adminCode || "reimeiadmin";
+          promoCode = data.promoCode || "REIMEIFREE";
+        } else {
+          setDoc(settingsDocRef, { adminCode: "reimeiadmin", promoCode: "REIMEIFREE" });
+        }
+      }, (error) => {
+        console.error("Firestore Settings Listener Error: ", error);
+      });
+
+      // 5. Reviews Sync
+      const reviewsCollection = collection(db, 'artifacts', appId, 'public', 'data', 'reviews');
+      onSnapshot(reviewsCollection, (snapshot) => {
+        const reviewsList = [];
+        snapshot.forEach((doc) => {
+          reviewsList.push({ id: doc.id, ...doc.data() });
+        });
+        reviews = reviewsList;
+        if (activeDetailProdId) {
+          renderReviewsForProduct(activeDetailProdId);
+        }
+      }, (error) => {
+        console.error("Firestore Reviews Listener Error: ", error);
+      });
+
+      // 6. Direct Messages Sync
+      const dmCollection = collection(db, 'artifacts', appId, 'public', 'data', 'dm_messages');
+      onSnapshot(dmCollection, (snapshot) => {
+        const msgs = [];
+        snapshot.forEach((doc) => {
+          msgs.push({ id: doc.id, ...doc.data() });
+        });
+        msgs.sort((a, b) => a.timestamp - b.timestamp);
+        dmMessages = msgs;
+        
+        updateDMUI();
+      }, (error) => {
+        console.error("Firestore DMs Listener Error: ", error);
+      });
+    }
+
+    // --- Firestore Initial Seeding ---
+    async function seedInitialFirestoreProducts() {
+      if (!auth.currentUser) return;
+      for (const item of DEFAULT_PRODUCTS) {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', item.id), {
+          name: item.name,
+          price: item.price,
+          stock: item.stock,
+          desc: item.desc,
+          icon: item.icon,
+          pointsEligible: item.pointsEligible !== undefined ? item.pointsEligible : true
+        });
+      }
+    }
+
+    // --- Tabs & Navigation Routing ---
+    function switchTab(tabName) {
+      currentTab = tabName;
+      if (tabName === 'shop') {
+        document.getElementById('tab-shop').classList.remove('hidden');
+        document.getElementById('tab-admin').classList.add('hidden');
+        renderProducts();
+      } else if (tabName === 'admin') {
+        if (!isAdminAuthenticated) {
+          openAdminAuthModal();
+          return;
+        }
+        document.getElementById('tab-shop').classList.add('hidden');
+        document.getElementById('tab-admin').classList.remove('hidden');
+        renderAdminDashboard();
+      }
+    }
+
+    function switchAdminSubTab(subTabName) {
+      currentAdminSubTab = subTabName;
+      
+      const subTabs = ['products', 'orders', 'users', 'dm', 'settings'];
+      subTabs.forEach(tab => {
+        const contentEl = document.getElementById(`admin-sub-${tab}`);
+        const btnEl = document.getElementById(`btn-admin-sub-${tab}`);
+        
+        if (tab === subTabName) {
+          contentEl.classList.remove('hidden');
+          btnEl.className = "px-5 py-3 border-b-2 border-indigo-500 text-indigo-400 font-bold text-sm transition shrink-0";
+        } else {
+          contentEl.classList.add('hidden');
+          btnEl.className = "px-5 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-sm transition shrink-0";
+        }
+      });
+
+      renderAdminDashboard();
+    }
+
+    // --- Unified Rendering System ---
+    function renderAll() {
+      document.getElementById('header-user-name').innerText = currentUser;
+      document.getElementById('hero-user-name').innerText = currentUser;
+      renderProducts();
+      renderCart();
+      
+      if (isAdminAuthenticated) {
+        document.getElementById('admin-btn-text').innerText = "管理画面";
+      } else {
+        document.getElementById('admin-btn-text').innerText = "管理室";
+      }
+    }
+
+    // --- Toast System ---
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastText.innerText = message;
+      
+      if (type === 'success') {
+        toastIcon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+        toastIcon.className = "w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center";
+      } else if (type === 'error') {
+        toastIcon.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-400"></i>`;
+        toastIcon.className = "w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center";
+      } else {
+        toastIcon.innerHTML = `<i class="fa-solid fa-circle-info text-cyan-400"></i>`;
+        toastIcon.className = "w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center";
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3000);
+    }
+
+    // --- Product Grid System ---
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      const emptyState = document.getElementById('shop-empty-state');
+      const sortVal = document.getElementById('sort-select').value;
+
+      grid.innerHTML = "";
+
+      let sortedProducts = [...products];
+      if (sortVal === 'price-asc') {
+        sortedProducts.sort((a, b) => a.price - b.price);
+      } else if (sortVal === 'price-desc') {
+        sortedProducts.sort((a, b) => b.price - a.price);
+      }
+
+      if (sortedProducts.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      sortedProducts.forEach(prod => {
+        const isOutOfStock = prod.stock <= 0;
+        const currentQtyInCart = cart[prod.id] || 0;
+        const isLimitReached = currentQtyInCart >= prod.stock;
+
+        // Calculate Average Star
+        const prodReviews = reviews.filter(r => r.productId === prod.id);
+        const avg = prodReviews.length > 0 
+          ? (prodReviews.reduce((sum, r) => sum + r.rating, 0) / prodReviews.length).toFixed(1)
+          : null;
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-950 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-slate-750 hover:shadow-lg hover:shadow-cyan-500/5 transition-all group relative cursor-pointer";
+        card.setAttribute("onclick", `openProductDetailsModal('${prod.id}', event)`);
+
+        card.innerHTML = `
+          <div>
+            <!-- Badge / Icon Container -->
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-850 flex items-center justify-center text-xl text-cyan-400 group-hover:bg-gradient-to-tr group-hover:from-cyan-500 group-hover:to-indigo-500 group-hover:text-slate-950 group-hover:border-transparent transition-all">
+                <i class="fa-solid ${prod.icon || 'fa-cube'}"></i>
+              </div>
+              <div class="flex flex-col items-end gap-1.5">
+                ${isOutOfStock 
+                  ? '<span class="bg-rose-500/10 text-rose-400 text-[10px] px-2.5 py-1 rounded-full font-bold border border-rose-500/20">売り切れ</span>' 
+                  : `<span class="bg-emerald-500/10 text-emerald-400 text-[10px] px-2.5 py-1 rounded-full font-bold border border-emerald-500/20">残り ${prod.stock} 個</span>`
                 }
-            }
-            requestAnimationFrame(animate);
-        }
-
-        window.addEventListener('resize', resizeCanvas);
-        window.addEventListener('DOMContentLoaded', () => {
-            resizeCanvas();
-            animate();
-        });
-
-        /* ==========================================================================
-           2. スクロールヘッダー効果 & Revealアニメーション
-           ========================================================================== */
-        const header = document.getElementById('mainHeader');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('bg-brand-black/90', 'border-white/10');
-                header.classList.remove('bg-brand-black/40', 'border-white/5');
-            } else {
-                header.classList.add('bg-brand-black/40', 'border-white/5');
-                header.classList.remove('bg-brand-black/90', 'border-white/10');
-            }
-
-            // 要素のスクロールイン表示
-            const reveals = document.querySelectorAll('.reveal');
-            reveals.forEach(reveal => {
-                const windowHeight = window.innerHeight;
-                const revealTop = reveal.getBoundingClientRect().top;
-                const revealPoint = 100;
-
-                if (revealTop < windowHeight - revealPoint) {
-                    reveal.classList.add('active');
+                ${prod.pointsEligible === false 
+                  ? '<span class="bg-slate-800 text-slate-400 text-[9px] px-2 py-0.5 rounded border border-slate-700 font-bold">ポイント不可</span>'
+                  : '<span class="bg-amber-500/10 text-amber-400 text-[9px] px-2 py-0.5 rounded border border-amber-500/20 font-bold">pt支払いOK</span>'
                 }
-            });
-        });
+                ${avg ? `<span class="bg-amber-500/10 text-amber-400 text-[10px] px-2 py-0.5 rounded border border-amber-500/20 font-bold flex items-center gap-0.5"><i class="fa-solid fa-star text-[9px]"></i> ${avg} (${prodReviews.length})</span>` : ''}
+              </div>
+            </div>
 
-        // 初期状態で可視域にある要素を表示
-        setTimeout(() => {
-            const reveals = document.querySelectorAll('.reveal');
-            reveals.forEach(reveal => {
-                if (reveal.getBoundingClientRect().top < window.innerHeight) {
-                    reveal.classList.add('active');
-                }
-            });
-        }, 100);
+            <!-- Content -->
+            <div class="space-y-1">
+              <h4 class="font-bold text-white group-hover:text-cyan-400 transition-colors text-base">${escapeHTML(prod.name)}</h4>
+              <p class="text-slate-400 text-xs leading-relaxed min-h-[40px] line-clamp-2">${escapeHTML(prod.desc || '説明はありません。')}</p>
+            </div>
+          </div>
 
-        /* ==========================================================================
-           3. モバイルメニュー開閉
-           ========================================================================== */
-        const menuBtn = document.getElementById('menuBtn');
-        const closeMenuBtn = document.getElementById('closeMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
-
-        function toggleMenu() {
-            mobileMenu.classList.toggle('translate-x-full');
-        }
-
-        menuBtn.addEventListener('click', toggleMenu);
-        closeMenuBtn.addEventListener('click', toggleMenu);
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', toggleMenu);
-        });
-
-        /* ==========================================================================
-           4. カスタムトースト通知機能 (ブラウザalert回避)
-           ========================================================================== */
-        const toast = document.getElementById('toast');
-        const toastTitle = document.getElementById('toastTitle');
-        const toastMsg = document.getElementById('toastMessage');
-
-        function showToast(message, title = 'システム通知') {
-            toastTitle.innerText = title;
-            toastMsg.innerText = message;
-            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-                toast.classList.remove('translate-y-0', 'opacity-100');
-            }, 4000);
-        }
-
-        /* ==========================================================================
-           5. AIキー入力設定の制御・ローカルストレージ管理
-           ========================================================================== */
-        const toggleSettingsBtn = document.getElementById('toggleSettingsBtn');
-        const settingsDrawer = document.getElementById('settingsDrawer');
-        const apiKeyInput = document.getElementById('apiKeyInput');
-        const toggleMaskBtn = document.getElementById('toggleMaskBtn');
-        const eyeIcon = document.getElementById('eyeIcon');
-        const saveKeyBtn = document.getElementById('saveKeyBtn');
-        const apiKeyWarning = document.getElementById('apiKeyWarning');
-        const statusDot = document.getElementById('statusDot');
-        const statusText = document.getElementById('statusText');
-        const settingsAlertDot = document.getElementById('settingsAlertDot');
-
-        let userApiKey = localStorage.getItem('reimei_gemini_api_key') || "";
-
-        // 初期ステータスの更新
-        function updateApiKeyUIStatus() {
-            if (userApiKey) {
-                apiKeyInput.value = userApiKey;
-                statusDot.className = "absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-brand-black rounded-full";
-                statusText.innerText = "Online | API Key Active";
-                statusText.classList.add('text-slate-400');
-                statusText.classList.remove('text-amber-500');
-                settingsAlertDot.classList.add('hidden');
-                settingsDrawer.classList.add('hidden');
-                if (apiKeyWarning) apiKeyWarning.classList.add('hidden');
-            } else {
-                apiKeyInput.value = "";
-                statusDot.className = "absolute bottom-0 right-0 w-2.5 h-2.5 bg-amber-500 border-2 border-brand-black rounded-full animate-pulse";
-                statusText.innerText = "Key Required | Powered by Gemini";
-                statusText.classList.add('text-amber-500');
-                statusText.classList.remove('text-slate-400');
-                settingsAlertDot.classList.remove('hidden');
-                settingsDrawer.classList.remove('hidden'); // 初回未設定時は明示的にアコーディオンを開いておく
-                if (apiKeyWarning) apiKeyWarning.classList.remove('hidden');
-            }
-        }
-
-        // ページロード時に設定を反映
-        updateApiKeyUIStatus();
-
-        // 歯車ボタンでアコーディオン開閉
-        toggleSettingsBtn.addEventListener('click', () => {
-            settingsDrawer.classList.toggle('hidden');
-        });
-
-        // 目のアイコンでAPIキーのマスク/表示切り替え
-        toggleMaskBtn.addEventListener('click', () => {
-            if (apiKeyInput.type === 'password') {
-                apiKeyInput.type = 'text';
-                eyeIcon.setAttribute('data-lucide', 'eye-off');
-            } else {
-                apiKeyInput.type = 'password';
-                eyeIcon.setAttribute('data-lucide', 'eye');
-            }
-            lucide.createIcons();
-        });
-
-        // APIキー保存
-        saveKeyBtn.addEventListener('click', () => {
-            const trimmedKey = apiKeyInput.value.trim();
-            if (trimmedKey) {
-                localStorage.setItem('reimei_gemini_api_key', trimmedKey);
-                userApiKey = trimmedKey;
-                showToast('APIキーをブラウザに安全に保存しました。', '設定完了');
-            } else {
-                localStorage.removeItem('reimei_gemini_api_key');
-                userApiKey = "";
-                showToast('APIキーを消去しました。', '設定解除');
-            }
-            updateApiKeyUIStatus();
-        });
-
-        /* ==========================================================================
-           6. AIチャット機能 (Gemini 2.5 API連携 + 指数バックオフ)
-           ========================================================================== */
-        const chatForm = document.getElementById('chatForm');
-        const chatInput = document.getElementById('chatInput');
-        const chatMessages = document.getElementById('chatMessages');
-        const clearChatBtn = document.getElementById('clearChatBtn');
-
-        // Gemini 2.5 APIを呼び出す関数 (指数バックオフ & リトライ付き)
-        async function fetchGeminiResponse(userQuery, retries = 5, delay = 1000) {
-            const systemPrompt = `
-You are Rei, the AI Technical Advisor for "reimei systems" (黎明システムズ).
-reimei systems is a highly innovative development team that actively and aggressively integrates AI into its development workflow. 
-
-We offer the following core services:
-1. "高速・超軽量時計アプリ (.exe)": A Windows desktop clock utility featuring milliseconds startup time and extreme optimization to consume virtually zero CPU/memory.
-2. "Discord Bot 制作": Multi-functional Discord bots automating server activities and integrating LLM-driven AI chat capabilities.
-3. "ウェブゲーム (HTML5) 作成": High-performance web games playable instantly on browser across both PC and Mobile without installation.
-4. "Roblox ゲーム制作": Rich 3D multiplayer games designed and scripted in Lua for the Roblox metaverse.
-
-Guidelines:
-1. Always reply in friendly, professional, and clear Japanese.
-2. Highlight how "reimei systems" merges cutting-edge AI power with lightweight and optimized craftsmanship.
-3. Guide users constructively on how we can implement their ideas (for clocks, Discord bots, Web games, or Roblox games).
-4. Since this is an interactive website chatbot, keep responses relatively concise and structured (use bullet points or lists if necessary).
-            `;
-
-            // 設定されているユーザーAPIキーを使用
-            const activeKey = userApiKey || "";
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`;
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
-            };
-
-            for (let attempt = 0; attempt < retries; attempt++) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (response.status === 400 || response.status === 403) {
-                        throw new Error("INVALID_API_KEY");
-                    }
-
-                    if (!response.ok) {
-                        throw new Error(`API returned state ${response.status}`);
-                    }
-
-                    const result = await response.json();
-                    const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (aiText) return aiText;
-                    throw new Error("Invalid response structure from Gemini API");
-                } catch (error) {
-                    // APIキー自体の不具合はリトライせず即時終了
-                    if (error.message === "INVALID_API_KEY") {
-                        throw error;
-                    }
-
-                    if (attempt === retries - 1) {
-                        throw error; // 全てのリトライが失敗した場合
-                    }
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2; // 指数バックオフ
-                }
-            }
-        }
-
-        // チャットにメッセージを挿入する
-        function appendMessage(sender, text) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'flex items-start gap-3 fade-in';
+          <!-- Bottom Price & CTA -->
+          <div class="mt-5 pt-4 border-t border-slate-900 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-slate-500 block">販売価格</span>
+              <span class="font-bold text-lg text-slate-100">¥${prod.price.toLocaleString()}</span>
+            </div>
             
-            if (sender === 'user') {
-                msgDiv.innerHTML = `
-                    <div class="flex items-start gap-3 justify-end w-full">
-                        <div class="bg-brand-blue/20 text-white border border-brand-blue/30 px-4 py-3 rounded-2xl rounded-tr-none max-w-[85%] leading-relaxed">
-                            ${escapeHtml(text)}
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-brand-blue/10 flex items-center justify-center shrink-0">
-                            <i data-lucide="user" class="w-4 h-4 text-brand-blue"></i>
-                        </div>
-                    </div>
-                `;
-            } else {
-                msgDiv.innerHTML = `
-                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-                        <i data-lucide="bot" class="w-4 h-4 text-brand-cyan"></i>
-                    </div>
-                    <div class="bg-white/5 text-slate-300 px-4 py-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed">
-                        ${text.replace(/\n/g, '<br>')}
-                    </div>
-                `;
-            }
-            chatMessages.appendChild(msgDiv);
-            lucide.createIcons(); // 新規挿入されたアイコンを有効化
-            chatMessages.scrollTop = chatMessages.scrollHeight; // スクロール最下部へ
+            <button 
+              onclick="event.stopPropagation(); addToCart('${prod.id}')"
+              ${isOutOfStock || isLimitReached ? 'disabled' : ''} 
+              class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1 ${
+                isOutOfStock || isLimitReached
+                  ? 'bg-slate-900 text-slate-650 border border-slate-800 cursor-not-allowed'
+                  : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-500/10'
+              }"
+            >
+              <i class="fa-solid fa-cart-plus"></i>
+              <span>${isLimitReached && !isOutOfStock ? '上限' : '入れる'}</span>
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // --- Product Details & Review Modal ---
+    function openProductDetailsModal(prodId, event) {
+      if (event) event.stopPropagation();
+      activeDetailProdId = prodId;
+      selectedRating = 5;
+      setReviewRating(5);
+      
+      updateProductDetailModalContent();
+      document.getElementById('modal-product-details').classList.remove('hidden');
+    }
+
+    function closeProductDetailsModal() {
+      document.getElementById('modal-product-details').classList.add('hidden');
+      activeDetailProdId = null;
+    }
+
+    function updateProductDetailModalContent() {
+      if (!activeDetailProdId) return;
+      const prod = products.find(p => p.id === activeDetailProdId);
+      if (!prod) return;
+
+      document.getElementById('detail-prod-name').innerText = prod.name;
+      document.getElementById('detail-prod-price').innerText = `¥${prod.price.toLocaleString()}`;
+      document.getElementById('detail-prod-desc').innerText = prod.desc || "説明はありません。";
+      
+      const badge = document.getElementById('detail-prod-stock-badge');
+      if (prod.stock <= 0) {
+        badge.className = "bg-rose-500/10 text-rose-400 text-xs px-2.5 py-0.5 rounded-full font-bold border border-rose-500/20";
+        badge.innerText = "売り切れ";
+      } else {
+        badge.className = "bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-0.5 rounded-full font-bold border border-emerald-500/20";
+        badge.innerText = `残り ${prod.stock} 個`;
+      }
+
+      const pBadge = document.getElementById('detail-prod-points-badge');
+      if (prod.pointsEligible === false) {
+        pBadge.className = "bg-slate-800 text-slate-400 text-xs px-2.5 py-0.5 rounded-full border border-slate-700 font-bold";
+        pBadge.innerText = "ポイント対象外";
+      } else {
+        pBadge.className = "bg-amber-500/10 text-amber-400 text-xs px-2.5 py-0.5 rounded-full border border-amber-500/20 font-bold";
+        pBadge.innerText = "pt支払いOK";
+      }
+
+      document.getElementById('detail-prod-icon-box').innerHTML = `<i class="fa-solid ${prod.icon || 'fa-cube'}"></i>`;
+      
+      // Update Add to Cart button inside details
+      const addBtn = document.getElementById('detail-add-cart-btn');
+      addBtn.setAttribute("onclick", `addToCart('${prod.id}')`);
+      if (prod.stock <= 0) {
+        addBtn.disabled = true;
+        addBtn.className = "bg-slate-800 text-slate-500 px-5 py-2 rounded-xl text-xs font-bold cursor-not-allowed";
+      } else {
+        addBtn.disabled = false;
+        addBtn.className = "bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5";
+      }
+
+      renderReviewsForProduct(prod.id);
+    }
+
+    function setReviewRating(rating) {
+      selectedRating = rating;
+      document.getElementById('new-review-rating').value = rating;
+      
+      document.querySelectorAll('.review-star-btn').forEach(btn => {
+        const starVal = parseInt(btn.getAttribute('data-val'));
+        if (starVal <= rating) {
+          btn.className = "review-star-btn text-amber-400 transition";
+        } else {
+          btn.className = "review-star-btn text-slate-700 hover:text-amber-400 transition";
+        }
+      });
+    }
+
+    async function submitReview() {
+      if (!auth.currentUser) return;
+      if (!activeDetailProdId) return;
+
+      const comment = document.getElementById('new-review-comment').value.trim();
+      if (!comment) {
+        showToast("コメントを入力してください", "error");
+        return;
+      }
+
+      try {
+        const reviewCollection = collection(db, 'artifacts', appId, 'public', 'data', 'reviews');
+        await addDoc(reviewCollection, {
+          productId: activeDetailProdId,
+          userId: currentUserId,
+          userName: currentUser,
+          rating: selectedRating,
+          comment: comment,
+          timestamp: Date.now()
+        });
+
+        document.getElementById('new-review-comment').value = "";
+        setReviewRating(5);
+        showToast("レビューを投稿しました！", "success");
+      } catch (err) {
+        showToast("レビューの投稿に失敗しました", "error");
+        console.error(err);
+      }
+    }
+
+    function renderReviewsForProduct(prodId) {
+      const container = document.getElementById('detail-reviews-list');
+      const avgSpan = document.getElementById('detail-average-rating');
+      container.innerHTML = "";
+
+      const prodReviews = reviews.filter(r => r.productId === prodId);
+      prodReviews.sort((a, b) => b.timestamp - a.timestamp);
+
+      if (prodReviews.length === 0) {
+        avgSpan.innerText = "★ なし (まだ評価がありません)";
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-500 text-xs">
+            レビューはまだありません。最初の一言を投稿しましょう！
+          </div>
+        `;
+        return;
+      }
+
+      const totalRating = prodReviews.reduce((sum, r) => sum + r.rating, 0);
+      const avg = (totalRating / prodReviews.length).toFixed(1);
+      avgSpan.innerText = `★ ${avg} (${prodReviews.length}件の投稿)`;
+
+      prodReviews.forEach(r => {
+        const starsHTML = Array.from({ length: 5 }, (_, i) => 
+          `<i class="fa-solid fa-star ${i < r.rating ? 'text-amber-400' : 'text-slate-800'} text-[10px]"></i>`
+        ).join('');
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-950 border border-slate-850 p-3 rounded-xl space-y-1.5 relative";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200">${escapeHTML(r.userName)}</span>
+            <div class="flex space-x-0.5">${starsHTML}</div>
+          </div>
+          <p class="text-xs text-slate-350 leading-relaxed">${escapeHTML(r.comment)}</p>
+          <span class="text-[9px] text-slate-600 block text-right">${new Date(r.timestamp).toLocaleDateString()}</span>
+
+          ${(r.userId === currentUserId || isAdminAuthenticated) ? `
+            <button onclick="deleteReview('${r.id}')" class="absolute bottom-3 left-3 text-slate-600 hover:text-rose-400 transition" title="レビュー削除">
+              <i class="fa-solid fa-trash-can text-[10px]"></i>
+            </button>
+          ` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // --- Cart System Management ---
+    function toggleCart() {
+      const drawer = document.getElementById('cart-drawer');
+      const isClosed = drawer.classList.contains('translate-x-full');
+      
+      if (isClosed) {
+        drawer.classList.remove('translate-x-full');
+        document.getElementById('dm-drawer').classList.add('translate-x-full');
+        renderCart();
+      } else {
+        drawer.classList.add('translate-x-full');
+      }
+    }
+
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      const currentQty = cart[productId] || 0;
+      if (currentQty >= product.stock) {
+        showToast(`「${product.name}」の在庫上限 (${product.stock}個) に達しています`, 'error');
+        return;
+      }
+
+      cart[productId] = currentQty + 1;
+      renderCart();
+      renderProducts();
+      updateCartBadge();
+      showToast(`「${product.name}」をカートに追加しました`, 'success');
+    }
+
+    function changeCartQty(productId, delta) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      const currentQty = cart[productId] || 0;
+      const targetQty = currentQty + delta;
+
+      if (targetQty <= 0) {
+        delete cart[productId];
+      } else if (targetQty > product.stock) {
+        showToast(`申し訳ありませんが、在庫は ${product.stock} 個までです。`, 'error');
+        cart[productId] = product.stock;
+      } else {
+        cart[productId] = targetQty;
+      }
+
+      renderCart();
+      renderProducts();
+      updateCartBadge();
+    }
+
+    function updateCartBadge() {
+      const totalItems = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+      const badge = document.getElementById('cart-badge');
+      if (totalItems > 0) {
+        badge.innerText = totalItems;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cart-items-container');
+      const userWarning = document.getElementById('cart-user-warning');
+      container.innerHTML = "";
+
+      if (!currentUser || currentUser.startsWith("ゲスト-")) {
+        userWarning.classList.remove('hidden');
+      } else {
+        userWarning.classList.add('hidden');
+      }
+
+      const cartEntries = Object.entries(cart);
+
+      if (cartEntries.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16 text-slate-500">
+            <i class="fa-solid fa-basket-shopping text-3xl mb-3 block"></i>
+            <span class="text-xs">カートは空っぽです</span>
+          </div>
+        `;
+        updateCartTotal(0, 0);
+        return;
+      }
+
+      let subtotal = 0;
+      let pointsEligibleSubtotal = 0;
+
+      cartEntries.forEach(([prodId, qty]) => {
+        const prod = products.find(p => p.id === prodId);
+        if (!prod) return;
+
+        const rowTotal = prod.price * qty;
+        subtotal += rowTotal;
+
+        if (prod.pointsEligible !== false) {
+          pointsEligibleSubtotal += rowTotal;
         }
 
-        // ローディングアニメーションを挿入
-        function showLoadingIndicator() {
-            const loaderDiv = document.createElement('div');
-            loaderDiv.id = 'chatLoader';
-            loaderDiv.className = 'flex items-start gap-3';
-            loaderDiv.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-                    <i data-lucide="bot" class="w-4 h-4 text-brand-cyan"></i>
-                </div>
-                <div class="bg-white/5 text-slate-400 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-brand-cyan animate-bounce" style="animation-delay: 0ms;"></span>
-                    <span class="w-2 h-2 rounded-full bg-brand-cyan animate-bounce" style="animation-delay: 150ms;"></span>
-                    <span class="w-2 h-2 rounded-full bg-brand-cyan animate-bounce" style="animation-delay: 300ms;"></span>
-                </div>
-            `;
-            chatMessages.appendChild(loaderDiv);
-            lucide.createIcons();
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function removeLoadingIndicator() {
-            const loader = document.getElementById('chatLoader');
-            if (loader) loader.remove();
-        }
-
-        function escapeHtml(string) {
-            return String(string).replace(/[&<>"']/g, function (s) {
-                return {
-                    "&": "&amp;",
-                    "<": "&lt;",
-                    ">": "&gt;",
-                    '"': '&quot;',
-                    "'": '&#39;'
-                }[s];
-            });
-        }
-
-        // 送信イベント
-        chatForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const message = chatInput.value.trim();
-            if (!message) return;
-
-            // APIキーが未登録の場合、送信をブロックして設定画面へ誘導
-            if (!userApiKey) {
-                showToast('APIキーを入力・保存してからもう一度送信してください。', 'キー未設定');
-                settingsDrawer.classList.remove('hidden'); // 設定欄を開く
-                apiKeyInput.focus();
-                return;
-            }
-
-            // ユーザーメッセージを追加
-            appendMessage('user', message);
-            chatInput.value = '';
-
-            // ローディング表示
-            showLoadingIndicator();
-
-            try {
-                // APIを叩く
-                const response = await fetchGeminiResponse(message);
-                removeLoadingIndicator();
-                // AIメッセージを追加
-                appendMessage('ai', response);
-            } catch (error) {
-                removeLoadingIndicator();
-                if (error.message === "INVALID_API_KEY") {
-                    appendMessage('ai', '【エラー】入力されたGemini APIキーが無効であるか、正しくありません。右上の歯車アイコンから正しいAPIキーを再設定してください。');
-                    showToast('保存されているキーが無効です。', 'キーエラー');
-                    settingsDrawer.classList.remove('hidden');
-                } else {
-                    appendMessage('ai', '申し訳ございません。通信中にエラーが発生しました。時間を置いてから再度お試しいただくか、AIチャット顧問「Rei」へ再度メッセージをお送りください。');
+        const el = document.createElement('div');
+        el.className = "bg-slate-900/80 border border-slate-850 p-4 rounded-xl flex items-center justify-between gap-3";
+        el.innerHTML = `
+          <div class="flex items-center space-x-3 truncate">
+            <div class="w-10 h-10 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-cyan-400 text-sm shrink-0">
+              <i class="fa-solid ${prod.icon || 'fa-cube'}"></i>
+            </div>
+            <div class="truncate">
+              <h5 class="font-bold text-slate-200 text-xs sm:text-sm truncate">${escapeHTML(prod.name)}</h5>
+              <div class="flex items-center space-x-2 mt-0.5">
+                <span class="text-xs text-slate-450">¥${prod.price.toLocaleString()}</span>
+                ${prod.pointsEligible === false 
+                  ? '<span class="text-[9px] text-slate-500 font-semibold bg-slate-950 px-1 rounded">ポイント対象外</span>'
+                  : '<span class="text-[9px] text-amber-500 font-semibold bg-amber-500/10 px-1 rounded">pt可</span>'
                 }
-                console.error("Chat Error:", error);
-            }
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-3 shrink-0">
+            <div class="flex items-center bg-slate-950 border border-slate-800 rounded-lg overflow-hidden">
+              <button onclick="changeCartQty('${prodId}', -1)" class="px-2.5 py-1 hover:bg-slate-900 transition text-slate-400 hover:text-white">-</button>
+              <span class="px-2 text-xs font-bold text-slate-200">${qty}</span>
+              <button onclick="changeCartQty('${prodId}', 1)" class="px-2.5 py-1 hover:bg-slate-900 transition text-slate-400 hover:text-white">+</button>
+            </div>
+            <span class="text-xs font-bold text-slate-300 w-16 text-right">¥${rowTotal.toLocaleString()}</span>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+
+      updateCartTotal(subtotal, pointsEligibleSubtotal);
+    }
+
+    function applyPromoCode() {
+      const codeInput = document.getElementById('promo-input').value.trim();
+      const statusEl = document.getElementById('promo-status');
+
+      if (!codeInput) {
+        showToast("コードを入力してください", "error");
+        return;
+      }
+
+      if (codeInput.toUpperCase() === promoCode.toUpperCase()) {
+        isPromoApplied = true;
+        statusEl.className = "text-[11px] text-emerald-400 font-bold block";
+        statusEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i>コード「${promoCode}」適用中！合計無料`;
+        showToast("指定コードを適用しました！お会計が無料になります", "success");
+        renderCart();
+      } else {
+        isPromoApplied = false;
+        statusEl.className = "text-[11px] text-rose-400 font-bold block";
+        statusEl.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i>無効なコードです`;
+        showToast("無効なコードです", "error");
+        renderCart();
+      }
+    }
+
+    function updateCartTotal(subtotal, pointsEligibleSubtotal) {
+      document.getElementById('cart-subtotal').innerText = `¥${subtotal.toLocaleString()}`;
+      document.getElementById('cart-points-eligible').innerText = `¥${pointsEligibleSubtotal.toLocaleString()}`;
+      
+      const discountRow = document.getElementById('cart-discount-row');
+      const discountEl = document.getElementById('cart-discount');
+      const totalEl = document.getElementById('cart-total');
+      const checkoutBtn = document.getElementById('checkout-btn');
+
+      const isUserValid = currentUser && !currentUser.startsWith("ゲスト-");
+
+      // Points deduction logic: We can deduct eligible points up to the current points limit
+      let pointsToDeduct = Math.min(pointsEligibleSubtotal, currentUserPoints);
+      document.getElementById('cart-points-used').innerText = `-${pointsToDeduct} pt (所持: ${currentUserPoints}pt)`;
+
+      let finalTotal = subtotal - pointsToDeduct;
+
+      if (isPromoApplied && subtotal > 0) {
+        discountRow.classList.remove('hidden');
+        discountEl.innerText = `-¥${finalTotal.toLocaleString()}`;
+        totalEl.innerText = `¥0`;
+        checkoutBtn.disabled = !isUserValid;
+      } else {
+        discountRow.classList.add('hidden');
+        totalEl.innerText = `¥${finalTotal.toLocaleString()}`;
+        checkoutBtn.disabled = subtotal <= 0 || !isUserValid;
+      }
+    }
+
+    // --- Order Checkout ---
+    async function submitOrder() {
+      if (!auth.currentUser) return;
+      if (!currentUser || currentUser.startsWith("ゲスト-")) {
+        showToast("お名前を設定しないと注文できません。", "error");
+        openUserModal();
+        return;
+      }
+
+      const cartEntries = Object.entries(cart);
+      if (cartEntries.length === 0) return;
+
+      // Validate stock
+      for (const [prodId, qty] of cartEntries) {
+        const prod = products.find(p => p.id === prodId);
+        if (!prod || prod.stock < qty) {
+          showToast(`「${prod ? prod.name : 'アイテム'}」の在庫が不足しているため注文を完了できませんでした。`, "error");
+          return;
+        }
+      }
+
+      try {
+        let subtotal = 0;
+        let pointsEligibleSubtotal = 0;
+
+        const orderedItems = cartEntries.map(([prodId, qty]) => {
+          const prod = products.find(p => p.id === prodId);
+          const price = prod ? prod.price : 0;
+          subtotal += price * qty;
+          if (prod && prod.pointsEligible !== false) {
+            pointsEligibleSubtotal += price * qty;
+          }
+
+          return {
+            id: prodId,
+            name: prod ? prod.name : "不明なアイテム",
+            priceAtPurchase: price,
+            quantity: qty,
+            pointsEligible: prod ? (prod.pointsEligible !== false) : true
+          };
         });
 
-        // チャットログ消去
-        clearChatBtn.addEventListener('click', () => {
-            chatMessages.innerHTML = `
-                <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-                        <i data-lucide="bot" class="w-4 h-4 text-brand-cyan"></i>
-                    </div>
-                    <div class="bg-white/5 text-slate-300 px-4 py-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed">
-                        チャット履歴を消去しました。何でも聞いてくださいね！
-                    </div>
-                </div>
-            `;
-            if (!userApiKey && apiKeyWarning) {
-                // 未設定時の警告を再挿入
-                chatMessages.insertBefore(apiKeyWarning, chatMessages.firstChild);
-                apiKeyWarning.classList.remove('hidden');
-            }
-            lucide.createIcons();
+        // Points to deduct
+        const pointsUsed = Math.min(pointsEligibleSubtotal, currentUserPoints);
+        const finalCashTotal = isPromoApplied ? 0 : (subtotal - pointsUsed);
+
+        // 1. Deduct Stock in Firestore
+        for (const [prodId, qty] of cartEntries) {
+          const prod = products.find(p => p.id === prodId);
+          if (prod) {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', prodId), {
+              stock: prod.stock - qty
+            });
+          }
+        }
+
+        // 2. Deduct Points from active user
+        if (pointsUsed > 0) {
+          const nextPoints = currentUserPoints - pointsUsed;
+          await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_points', currentUserId), {
+            points: nextPoints,
+            userName: currentUser // ensure name is updated in list too
+          });
+        }
+
+        // 3. Upload Order to Firestore
+        const orderId = "order-" + Date.now();
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId), {
+          id: orderId,
+          customerName: currentUser,
+          userId: currentUserId,
+          items: orderedItems,
+          subtotal: subtotal,
+          pointsUsed: pointsUsed,
+          total: finalCashTotal, // Payable cash
+          promoUsed: isPromoApplied ? promoCode : null,
+          status: 'pending', // 'pending' | 'paid' | 'completed' (未払い、支払い済み、お渡し完了)
+          timestamp: new Date().toLocaleString('ja-JP'),
+          epoch: Date.now()
         });
-    </script>
+
+        // 4. Reset Cart
+        cart = {};
+        isPromoApplied = false;
+        document.getElementById('promo-input').value = "";
+        document.getElementById('promo-status').classList.add('hidden');
+        updateCartBadge();
+        toggleCart();
+        renderAll();
+
+        // Show inline custom success dialog
+        showSuccessModal({
+          id: orderId,
+          customerName: currentUser,
+          total: finalCashTotal,
+          pointsUsed: pointsUsed
+        });
+
+      } catch (err) {
+        showToast("注文の送信中にエラーが発生しました", "error");
+        console.error(err);
+      }
+    }
+
+    function showSuccessModal(order) {
+      const modal = document.createElement('div');
+      modal.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md";
+      modal.id = "modal-order-success";
+      
+      modal.innerHTML = `
+        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl w-full max-w-md p-6 relative text-center space-y-4">
+          <div class="w-16 h-16 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center justify-center text-3xl mx-auto">
+            <i class="fa-solid fa-square-check"></i>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-lg font-bold text-white">注文を受け付けました！</h3>
+            <p class="text-xs text-slate-400">クラウド経由でリアルタイム送信されました。</p>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-left text-xs space-y-2">
+            <div class="flex justify-between"><span class="text-slate-500">注文ID:</span><span class="text-slate-300">${order.id}</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">お名前:</span><span class="text-slate-300">${escapeHTML(order.customerName)}</span></div>
+            <div class="flex justify-between"><span class="text-amber-550">ポイント利用分:</span><span class="text-amber-400 font-bold">${order.pointsUsed} pt</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">現地現金支払額:</span><span class="text-cyan-400 font-extrabold text-sm">¥${order.total.toLocaleString()}</span></div>
+            <div class="border-t border-slate-850 pt-2 text-[10px] text-slate-400">
+              ※ ポイントから引き去りきれなかった差額が現金支払い分となります。直接管理者とお支払い・引き渡しを行ってください。
+            </div>
+          </div>
+          <button onclick="document.getElementById('modal-order-success').remove()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition text-sm">
+            閉じる
+          </button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    // --- User Profile ---
+    function openUserModal() {
+      document.getElementById('user-name-input').value = currentUser.startsWith("ゲスト-") ? "" : currentUser;
+      document.getElementById('modal-user').classList.remove('hidden');
+    }
+
+    function closeUserModal() {
+      document.getElementById('modal-user').classList.add('hidden');
+    }
+
+    async function saveUserProfile() {
+      const val = document.getElementById('user-name-input').value.trim();
+      if (!val) {
+        showToast("有効なニックネームを入力してください", "error");
+        return;
+      }
+
+      currentUser = val;
+      localStorage.setItem(DB_KEYS.USER, currentUser);
+
+      // Sync name to point database in firestore
+      if (auth.currentUser) {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_points', currentUserId), {
+          userId: currentUserId,
+          userName: currentUser,
+          points: currentUserPoints
+        });
+      }
+
+      closeUserModal();
+      renderAll();
+      showToast(`こんにちは、${currentUser}さん！`, "success");
+    }
+
+    // --- Admin Authentication ---
+    function openAdminAuthModal() {
+      if (isAdminAuthenticated) {
+        switchTab('admin');
+        return;
+      }
+      document.getElementById('admin-pass-input').value = "";
+      document.getElementById('modal-admin-auth').classList.remove('hidden');
+    }
+
+    function closeAdminAuthModal() {
+      document.getElementById('modal-admin-auth').classList.add('hidden');
+    }
+
+    function authAdmin() {
+      const pass = document.getElementById('admin-pass-input').value;
+      if (pass === adminCode) {
+        isAdminAuthenticated = true;
+        closeAdminAuthModal();
+        showToast("管理者認証に成功しました", "success");
+        switchTab('admin');
+        renderAll();
+      } else {
+        showToast("管理者コードが異なります", "error");
+      }
+    }
+
+    function logoutAdmin() {
+      isAdminAuthenticated = false;
+      switchTab('shop');
+      renderAll();
+      showToast("管理室を退出しました");
+    }
+
+    // --- Admin View Routing ---
+    function renderAdminDashboard() {
+      if (currentAdminSubTab === 'products') renderAdminProducts();
+      if (currentAdminSubTab === 'orders') renderAdminOrders();
+      if (currentAdminSubTab === 'users') renderAdminUsersPoints();
+      if (currentAdminSubTab === 'dm') renderAdminDM();
+      if (currentAdminSubTab === 'settings') renderAdminSettings();
+    }
+
+    // --- Admin Product Listing View ---
+    function renderAdminProducts() {
+      const desktopBody = document.getElementById('admin-product-table-body');
+      const mobileList = document.getElementById('admin-product-mobile-list');
+
+      desktopBody.innerHTML = "";
+      mobileList.innerHTML = "";
+
+      products.forEach(prod => {
+        const isEligible = prod.pointsEligible !== false;
+        
+        // Desktop
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-900/50 transition-colors";
+        tr.innerHTML = `
+          <td class="px-6 py-4 flex items-center space-x-3">
+            <div class="w-9 h-9 bg-slate-900 rounded-lg text-indigo-400 flex items-center justify-center border border-slate-800 text-sm">
+              <i class="fa-solid ${prod.icon || 'fa-cube'}"></i>
+            </div>
+            <div>
+              <span class="font-bold text-white block text-sm">${escapeHTML(prod.name)}</span>
+              <span class="text-[10px] text-slate-500">${prod.id}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 font-semibold text-slate-200">
+            ¥${prod.price.toLocaleString()}
+          </td>
+          <td class="px-6 py-4">
+            <span class="px-2.5 py-1 text-xs rounded-full font-bold ${
+              isEligible ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-slate-800 text-slate-500 border border-slate-700'
+            }">
+              ${isEligible ? 'ポイント可能' : 'ポイント対象外'}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center space-x-2">
+              <input type="number" onchange="updateDirectStock('${prod.id}', this.value)" value="${prod.stock}" min="0" class="w-16 bg-slate-950 border border-slate-800 rounded px-2 py-1 text-center font-semibold text-slate-300">
+              <span class="text-xs text-slate-500">個</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-slate-400 text-xs max-w-xs truncate">
+            ${escapeHTML(prod.desc || '')}
+          </td>
+          <td class="px-6 py-4 text-right space-x-2">
+            <button onclick="openProductModal('${prod.id}')" class="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 p-1.5 rounded-lg transition">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button onclick="deleteProduct('${prod.id}')" class="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 p-1.5 rounded-lg transition">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        `;
+        desktopBody.appendChild(tr);
+
+        // Mobile
+        const mobCard = document.createElement('div');
+        mobCard.className = "bg-slate-950 border border-slate-850 p-4 rounded-xl space-y-3";
+        mobCard.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <div class="w-8 h-8 bg-slate-900 rounded-lg text-indigo-400 flex items-center justify-center border border-slate-800">
+                <i class="fa-solid ${prod.icon || 'fa-cube'}"></i>
+              </div>
+              <div>
+                <span class="font-bold text-slate-200 text-xs block">${escapeHTML(prod.name)}</span>
+                <span class="text-[9px] text-slate-500">価格: ¥${prod.price} | ${isEligible ? 'pt可' : 'pt不可'}</span>
+              </div>
+            </div>
+            <div class="flex space-x-1">
+              <button onclick="openProductModal('${prod.id}')" class="text-indigo-400 bg-indigo-500/10 p-2 rounded-lg text-xs"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteProduct('${prod.id}')" class="text-rose-400 bg-rose-500/10 p-2 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-xs pt-2 border-t border-slate-900">
+            <span class="text-slate-500">在庫調整:</span>
+            <div class="flex items-center space-x-2">
+              <input type="number" onchange="updateDirectStock('${prod.id}', this.value)" value="${prod.stock}" min="0" class="w-14 bg-slate-900 border border-slate-800 rounded text-center py-0.5 text-slate-200 font-bold">
+              <span class="text-[10px] text-slate-500">個</span>
+            </div>
+          </div>
+        `;
+        mobileList.appendChild(mobCard);
+      });
+    }
+
+    // --- Product Form CRUD actions inside modal ---
+    function openProductModal(prodId = '') {
+      const titleEl = document.getElementById('product-modal-title');
+      const idInput = document.getElementById('edit-product-id');
+      const nameInput = document.getElementById('prod-name');
+      const priceInput = document.getElementById('prod-price');
+      const stockInput = document.getElementById('prod-stock');
+      const descInput = document.getElementById('prod-desc');
+      const iconInput = document.getElementById('prod-icon');
+      const ptCheck = document.getElementById('prod-points-eligible');
+
+      document.querySelectorAll('.icon-preset-btn').forEach(btn => btn.classList.remove('border-indigo-500', 'text-white'));
+
+      if (prodId) {
+        const prod = products.find(p => p.id === prodId);
+        if (!prod) return;
+
+        titleEl.innerText = "アイテムの編集";
+        idInput.value = prod.id;
+        nameInput.value = prod.name;
+        priceInput.value = prod.price;
+        stockInput.value = prod.stock;
+        descInput.value = prod.desc || '';
+        iconInput.value = prod.icon || 'fa-cube';
+        ptCheck.checked = prod.pointsEligible !== false;
+
+        const activeBtn = document.querySelector(`.icon-preset-btn[data-icon="${prod.icon || 'fa-cube'}"]`);
+        if (activeBtn) activeBtn.classList.add('border-indigo-500', 'text-white');
+      } else {
+        titleEl.innerText = "新規アイテムの登録";
+        idInput.value = "";
+        nameInput.value = "";
+        priceInput.value = "";
+        stockInput.value = "10";
+        descInput.value = "";
+        iconInput.value = "fa-cube";
+        ptCheck.checked = true;
+        
+        const activeBtn = document.querySelector(`.icon-preset-btn[data-icon="fa-cube"]`);
+        if (activeBtn) activeBtn.classList.add('border-indigo-500', 'text-white');
+      }
+
+      document.getElementById('modal-product').classList.remove('hidden');
+    }
+
+    function closeProductModal() {
+      document.getElementById('modal-product').classList.add('hidden');
+    }
+
+    function selectPresetIcon(iconClass) {
+      document.getElementById('prod-icon').value = iconClass;
+      document.querySelectorAll('.icon-preset-btn').forEach(btn => {
+        if (btn.getAttribute('data-icon') === iconClass) {
+          btn.classList.add('border-indigo-500', 'text-white');
+        } else {
+          btn.classList.remove('border-indigo-500', 'text-white');
+        }
+      });
+    }
+
+    async function saveProduct() {
+      if (!auth.currentUser) return;
+      const idInput = document.getElementById('edit-product-id').value;
+      const name = document.getElementById('prod-name').value.trim();
+      const price = parseInt(document.getElementById('prod-price').value);
+      const stock = parseInt(document.getElementById('prod-stock').value);
+      const desc = document.getElementById('prod-desc').value.trim();
+      const icon = document.getElementById('prod-icon').value;
+      const pointsEligible = document.getElementById('prod-points-eligible').checked;
+
+      if (!name || isNaN(price) || isNaN(stock)) {
+        showToast("必須項目 (*) を正しく入力してください", "error");
+        return;
+      }
+
+      try {
+        const prodId = idInput || "prod-" + Date.now();
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', prodId), {
+          name,
+          price,
+          stock,
+          desc,
+          icon,
+          pointsEligible
+        });
+
+        showToast(idInput ? "商品を更新しました" : "商品を新しく登録しました", "success");
+        closeProductModal();
+      } catch (err) {
+        showToast("データの書き込みに失敗しました", "error");
+      }
+    }
+
+    async function updateDirectStock(productId, newQty) {
+      if (!auth.currentUser) return;
+      const qty = parseInt(newQty);
+      const targetQty = isNaN(qty) || qty < 0 ? 0 : qty;
+      try {
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', productId), {
+          stock: targetQty
+        });
+        showToast("在庫数を更新しました", "success");
+      } catch (err) {
+        showToast("在庫更新に失敗しました", "error");
+      }
+    }
+
+    function deleteProduct(productId) {
+      const modal = document.createElement('div');
+      modal.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm";
+      modal.id = "modal-confirm-delete";
+      
+      modal.innerHTML = `
+        <div class="bg-slate-900 border border-rose-500/30 rounded-2xl w-full max-w-sm p-6 relative text-center space-y-4">
+          <div class="w-14 h-14 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full flex items-center justify-center text-2xl mx-auto">
+            <i class="fa-solid fa-circle-exclamation"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">この商品を削除しますか？</h3>
+            <p class="text-xs text-slate-400 mt-1">Firestoreから完全に削除されます。</p>
+          </div>
+          <div class="flex space-x-3">
+            <button onclick="document.getElementById('modal-confirm-delete').remove()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 rounded-xl text-xs font-bold">キャンセル</button>
+            <button onclick="confirmDeleteProduct('${productId}')" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-2.5 rounded-xl text-xs font-bold">削除する</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    async function confirmDeleteProduct(productId) {
+      if (!auth.currentUser) return;
+      try {
+        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', productId));
+        document.getElementById('modal-confirm-delete').remove();
+        showToast("商品を削除しました");
+      } catch (err) {
+        showToast("削除に失敗しました", "error");
+      }
+    }
+
+    // --- Admin Orders List View ---
+    function renderAdminOrders() {
+      const container = document.getElementById('admin-orders-list');
+      const emptyState = document.getElementById('orders-empty-state');
+      container.innerHTML = "";
+
+      if (orders.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      const sorted = [...orders].sort((a, b) => (b.epoch || 0) - (a.epoch || 0));
+
+      sorted.forEach(order => {
+        let itemsHTML = order.items.map(item => `
+          <div class="flex justify-between items-center text-xs py-1 text-slate-300">
+            <div>
+              <span class="font-bold text-slate-200">${escapeHTML(item.name)}</span>
+              <span class="text-[10px] text-slate-500 ml-1">x ${item.quantity}</span>
+              ${item.pointsEligible === false ? '<span class="text-[9px] text-slate-500 bg-slate-900 px-1 rounded ml-1">pt対象外</span>' : ''}
+            </div>
+            <span>¥${(item.priceAtPurchase * item.quantity).toLocaleString()}</span>
+          </div>
+        `).join('');
+
+        const isFree = order.promoUsed !== null;
+
+        // Status badges & controls styling
+        let statusText = "未払い/未渡し";
+        let statusColor = "bg-rose-500/10 text-rose-400 border-rose-500/20";
+        
+        if (order.status === 'paid') {
+          statusText = "お支払い済";
+          statusColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+        } else if (order.status === 'completed') {
+          statusText = "お渡し完了";
+          statusColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+        }
+
+        const orderCard = document.createElement('div');
+        orderCard.className = "bg-slate-950 border border-slate-800 rounded-xl overflow-hidden hover:border-slate-750 transition-all";
+        orderCard.innerHTML = `
+          <!-- Header -->
+          <div class="bg-slate-900/60 p-4 border-b border-slate-850 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+            <div>
+              <div class="flex items-center flex-wrap gap-2">
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">${escapeHTML(order.customerName)}</span>
+                <span class="text-xs text-slate-400">${order.timestamp}</span>
+                <span class="px-2 py-0.5 text-[9px] font-bold border rounded-md ${statusColor}">${statusText}</span>
+              </div>
+              <span class="text-[10px] text-slate-500 mt-1 block">注文ID: ${order.id}</span>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-4">
+              <!-- Payment Info -->
+              <div class="text-right">
+                <div class="text-[10px] text-slate-500">注文合計額: ¥${(order.subtotal || order.total).toLocaleString()}</div>
+                <div class="text-xs text-amber-400 font-semibold">pt利用: -${order.pointsUsed || 0}pt</div>
+                <div class="font-extrabold text-slate-100 mt-0.5">
+                  現地現金支払残高: <span class="${isFree ? 'text-emerald-400 line-through' : 'text-cyan-400'}">¥${order.total.toLocaleString()}</span>
+                </div>
+                ${isFree ? `<span class="block text-[10px] text-emerald-400 font-bold">[無料化コード: ${order.promoUsed}]</span>` : ''}
+              </div>
+              
+              <!-- Quick State Switch Controls -->
+              <div class="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-1 space-x-1 shrink-0">
+                <button onclick="updateOrderStatus('${order.id}', 'pending')" class="px-2 py-1 text-[10px] font-bold rounded ${order.status === 'pending' || !order.status ? 'bg-rose-500 text-slate-950' : 'text-slate-400 hover:text-slate-200'}">未</button>
+                <button onclick="updateOrderStatus('${order.id}', 'paid')" class="px-2 py-1 text-[10px] font-bold rounded ${order.status === 'paid' ? 'bg-amber-500 text-slate-950' : 'text-slate-400 hover:text-slate-200'}">支払済</button>
+                <button onclick="updateOrderStatus('${order.id}', 'completed')" class="px-2 py-1 text-[10px] font-bold rounded ${order.status === 'completed' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-slate-200'}">完了</button>
+              </div>
+
+              <button onclick="deleteSingleOrder('${order.id}')" class="text-slate-500 hover:text-rose-400 p-2 rounded-lg hover:bg-rose-500/10 transition" title="この注文を削除">
+                <i class="fa-solid fa-trash-can text-sm"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="p-4 space-y-3 bg-slate-950/40">
+            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block border-b border-slate-900 pb-1.5">購入内容</span>
+            <div class="divide-y divide-slate-900">
+              ${itemsHTML}
+            </div>
+          </div>
+        `;
+        container.appendChild(orderCard);
+      });
+    }
+
+    async function updateOrderStatus(orderId, nextStatus) {
+      if (!auth.currentUser) return;
+      try {
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId), {
+          status: nextStatus
+        });
+        showToast("注文ステータスを更新しました", "success");
+      } catch (err) {
+        showToast("ステータス更新に失敗しました", "error");
+      }
+    }
+
+    async function deleteSingleOrder(orderId) {
+      if (!auth.currentUser) return;
+      try {
+        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId));
+        showToast("注文履歴から1件削除しました");
+      } catch (err) {
+        showToast("削除に失敗しました", "error");
+      }
+    }
+
+    function clearAllOrders() {
+      const modal = document.createElement('div');
+      modal.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm";
+      modal.id = "modal-confirm-clear-orders";
+      
+      modal.innerHTML = `
+        <div class="bg-slate-900 border border-rose-500/30 rounded-2xl w-full max-w-sm p-6 relative text-center space-y-4">
+          <div class="w-14 h-14 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full flex items-center justify-center text-2xl mx-auto">
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">すべての注文履歴を全削除しますか？</h3>
+            <p class="text-xs text-slate-400 mt-1">クラウド上（Firestore）から一発ですべての注文データが空になります。</p>
+          </div>
+          <div class="flex space-x-3">
+            <button onclick="document.getElementById('modal-confirm-clear-orders').remove()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 rounded-xl text-xs font-bold">キャンセル</button>
+            <button onclick="confirmClearAllOrders()" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-2.5 rounded-xl text-xs font-bold">全削除する</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    async function confirmClearAllOrders() {
+      if (!auth.currentUser) return;
+      try {
+        for (const order of orders) {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', order.id));
+        }
+        document.getElementById('modal-confirm-clear-orders').remove();
+        showToast("すべての注文履歴を削除しました", "success");
+      } catch (err) {
+        showToast("注文履歴の削除に失敗しました", "error");
+      }
+    }
+
+    // --- Admin Users Points Listing ---
+    function renderAdminUsersPoints() {
+      const tbody = document.getElementById('admin-users-table-body');
+      const emptyMsg = document.getElementById('admin-users-empty');
+      tbody.innerHTML = "";
+
+      if (userPointsList.length === 0) {
+        emptyMsg.classList.remove('hidden');
+        return;
+      } else {
+        emptyMsg.classList.add('hidden');
+      }
+
+      userPointsList.forEach(userItem => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-900/50 transition-colors";
+        tr.innerHTML = `
+          <td class="px-6 py-4">
+            <div class="flex flex-col">
+              <span class="font-bold text-slate-100 text-sm">${escapeHTML(userItem.userName)}</span>
+              <span class="text-[9px] text-slate-500 font-mono">${userItem.id}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 font-extrabold text-amber-400 text-sm">
+            ${userItem.points} <span class="text-xs text-slate-400 font-normal">pt</span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end space-x-2">
+              <input type="number" id="charge-input-${userItem.id}" placeholder="+50 または -50" class="w-28 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-center text-slate-200">
+              <button onclick="chargeUserPoints('${userItem.id}', ${userItem.points})" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-lg transition">チャージ</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function chargeUserPoints(targetUserId, currentPoints) {
+      if (!auth.currentUser) return;
+      const input = document.getElementById(`charge-input-${targetUserId}`);
+      const delta = parseInt(input.value);
+
+      if (isNaN(delta)) {
+        showToast("有効な数値を入力してください", "error");
+        return;
+      }
+
+      const nextPoints = Math.max(0, currentPoints + delta);
+      try {
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_points', targetUserId), {
+          points: nextPoints
+        });
+        input.value = "";
+        showToast("ポイントを直接調整しました", "success");
+      } catch (err) {
+        showToast("調整に失敗しました", "error");
+      }
+    }
+
+    async function distributeMonthlyPoints(amount) {
+      if (!auth.currentUser) return;
+      
+      const modal = document.createElement('div');
+      modal.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm";
+      modal.id = "modal-confirm-distribute";
+      
+      modal.innerHTML = `
+        <div class="bg-slate-900 border border-amber-500/30 rounded-2xl w-full max-w-sm p-6 relative text-center space-y-4">
+          <div class="w-14 h-14 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full flex items-center justify-center text-2xl mx-auto">
+            <i class="fa-solid fa-coins"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">月100ポイントを全員にリセット配給しますか？</h3>
+            <p class="text-xs text-slate-400 mt-1">現在までに登録されている全メンバーのポイントを <strong>100 pt</strong> に設定（上書きリセット）します。</p>
+          </div>
+          <div class="flex space-x-3">
+            <button onclick="document.getElementById('modal-confirm-distribute').remove()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 rounded-xl text-xs font-bold">キャンセル</button>
+            <button onclick="confirmDistribute(${amount})" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl text-xs font-bold">配布リセット</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    window.confirmDistribute = async function(amount) {
+      if (!auth.currentUser) return;
+      try {
+        for (const userItem of userPointsList) {
+          await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_points', userItem.id), {
+            points: amount
+          });
+        }
+        document.getElementById('modal-confirm-distribute').remove();
+        showToast(`全員にポイントを ${amount}pt にリセット配給しました！`, "success");
+      } catch (err) {
+        showToast("配布に失敗しました", "error");
+      }
+    }
+
+    // --- Admin DM Thread Panel Renderer ---
+    function renderAdminDM() {
+      const threadContainer = document.getElementById('admin-dm-threads');
+      threadContainer.innerHTML = "";
+
+      const userThreads = {};
+      dmMessages.forEach(msg => {
+        const otherUser = msg.senderId === 'admin' ? msg.recipientId : msg.senderId;
+        const otherUserName = msg.senderId === 'admin' ? msg.recipientName : msg.senderName;
+        
+        if (!userThreads[otherUser]) {
+          userThreads[otherUser] = {
+            userId: otherUser,
+            userName: otherUserName || "ゲスト",
+            lastMsg: msg.text,
+            timestamp: msg.timestamp,
+            unread: msg.senderId !== 'admin' && !msg.read
+          };
+        } else {
+          if (msg.timestamp > userThreads[otherUser].timestamp) {
+            userThreads[otherUser].lastMsg = msg.text;
+            userThreads[otherUser].timestamp = msg.timestamp;
+            if (msg.senderId !== 'admin' && !msg.read) {
+              userThreads[otherUser].unread = true;
+            }
+          }
+        }
+      });
+
+      const threadList = Object.values(userThreads).sort((a, b) => b.timestamp - a.timestamp);
+
+      if (threadList.length === 0) {
+        threadContainer.innerHTML = `<span class="text-xs text-slate-500 block text-center py-6">チャットはありません</span>`;
+        return;
+      }
+
+      threadList.forEach(thread => {
+        const btn = document.createElement('button');
+        btn.onclick = () => selectAdminChatThread(thread.userId, thread.userName);
+        const isActive = adminActiveThreadUserId === thread.userId;
+
+        btn.className = `w-full text-left p-3 rounded-xl transition flex items-center justify-between ${
+          isActive ? 'bg-indigo-600 text-white' : 'bg-slate-900 hover:bg-slate-850 text-slate-300'
+        }`;
+
+        btn.innerHTML = `
+          <div class="truncate pr-2">
+            <span class="font-bold text-xs sm:text-sm block truncate">${escapeHTML(thread.userName)}</span>
+            <span class="text-[10px] opacity-70 block truncate mt-0.5">${escapeHTML(thread.lastMsg)}</span>
+          </div>
+          ${thread.unread && !isActive ? '<span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shrink-0"></span>' : ''}
+        `;
+        threadContainer.appendChild(btn);
+      });
+
+      if (adminActiveThreadUserId) {
+        renderAdminChatMessages();
+      }
+    }
+
+    function selectAdminChatThread(userId, userName) {
+      adminActiveThreadUserId = userId;
+      document.getElementById('admin-chat-target-name').innerText = userName;
+      document.getElementById('admin-chat-target-id').innerText = `ID: ${userId}`;
+      
+      document.getElementById('admin-dm-input').disabled = false;
+      document.getElementById('admin-dm-send-btn').disabled = false;
+
+      markThreadAsRead(userId);
+      renderAdminChatMessages();
+    }
+
+    async function markThreadAsRead(userId) {
+      if (!auth.currentUser) return;
+      const unreads = dmMessages.filter(m => m.senderId === userId && !m.read);
+      for (const msg of unreads) {
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'dm_messages', msg.id), {
+          read: true
+        });
+      }
+    }
+
+    function renderAdminChatMessages() {
+      const container = document.getElementById('admin-chat-messages');
+      container.innerHTML = "";
+
+      const threadMsgs = dmMessages.filter(m => 
+        (m.senderId === 'admin' && m.recipientId === adminActiveThreadUserId) || 
+        (m.senderId === adminActiveThreadUserId && m.recipientId === 'admin')
+      );
+
+      if (threadMsgs.length === 0) {
+        container.innerHTML = `<span class="text-xs text-slate-500 block text-center py-6">メッセージはありません</span>`;
+        return;
+      }
+
+      threadMsgs.forEach(msg => {
+        const isAdmin = msg.senderId === 'admin';
+        const el = document.createElement('div');
+        el.className = `flex ${isAdmin ? 'justify-end' : 'justify-start'} w-full`;
+        
+        el.innerHTML = `
+          <div class="max-w-[75%] rounded-2xl px-4 py-2.5 text-xs ${
+            isAdmin ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-slate-800 text-slate-200 rounded-tl-none'
+          }">
+            <p class="leading-relaxed break-all">${escapeHTML(msg.text)}</p>
+            <span class="text-[9px] opacity-60 block text-right mt-1">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendAdminDM() {
+      if (!auth.currentUser) return;
+      if (!adminActiveThreadUserId) return;
+
+      const input = document.getElementById('admin-dm-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      try {
+        const dmCollection = collection(db, 'artifacts', appId, 'public', 'data', 'dm_messages');
+        await addDoc(dmCollection, {
+          senderId: 'admin',
+          senderName: '管理者',
+          recipientId: adminActiveThreadUserId,
+          recipientName: document.getElementById('admin-chat-target-name').innerText,
+          text: text,
+          timestamp: Date.now(),
+          read: false
+        });
+
+        input.value = "";
+        renderAdminChatMessages();
+      } catch (err) {
+        showToast("メッセージの送信に失敗しました", "error");
+      }
+    }
+
+    // --- User Side DM Slideout ---
+    function openDMDrawer() {
+      const drawer = document.getElementById('dm-drawer');
+      drawer.classList.remove('translate-x-full');
+      document.getElementById('cart-drawer').classList.add('translate-x-full');
+      renderUserDMMessages();
+      markUserMessagesAsRead();
+    }
+
+    function toggleDMDrawer() {
+      const drawer = document.getElementById('dm-drawer');
+      const isClosed = drawer.classList.contains('translate-x-full');
+      if (isClosed) {
+        openDMDrawer();
+      } else {
+        drawer.classList.add('translate-x-full');
+      }
+    }
+
+    function renderUserDMMessages() {
+      const container = document.getElementById('user-dm-messages');
+      container.innerHTML = "";
+
+      const myMsgs = dmMessages.filter(m => 
+        (m.senderId === currentUserId && m.recipientId === 'admin') || 
+        (m.senderId === 'admin' && m.recipientId === currentUserId)
+      );
+
+      if (myMsgs.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-slate-500 text-xs">
+            会話はまだありません。<br>管理者にメッセージを送ってみましょう！
+          </div>
+        `;
+        return;
+      }
+
+      myMsgs.forEach(msg => {
+        const isMe = msg.senderId === currentUserId;
+        const el = document.createElement('div');
+        el.className = `flex ${isMe ? 'justify-end' : 'justify-start'} w-full`;
+
+        el.innerHTML = `
+          <div class="max-w-[75%] rounded-2xl px-4 py-2.5 text-xs ${
+            isMe ? 'bg-cyan-500 text-slate-950 rounded-tr-none font-medium' : 'bg-slate-800 text-slate-200 rounded-tl-none'
+          }">
+            <p class="leading-relaxed break-all">${escapeHTML(msg.text)}</p>
+            <span class="text-[9px] opacity-60 block text-right mt-1">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendUserDM() {
+      if (!auth.currentUser) return;
+      const input = document.getElementById('user-dm-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      try {
+        const dmCollection = collection(db, 'artifacts', appId, 'public', 'data', 'dm_messages');
+        await addDoc(dmCollection, {
+          senderId: currentUserId,
+          senderName: currentUser,
+          recipientId: 'admin',
+          recipientName: '管理者',
+          text: text,
+          timestamp: Date.now(),
+          read: false
+        });
+
+        input.value = "";
+        renderUserDMMessages();
+      } catch (err) {
+        showToast("メッセージの送信に失敗しました", "error");
+      }
+    }
+
+    async function markUserMessagesAsRead() {
+      if (!auth.currentUser) return;
+      const unreads = dmMessages.filter(m => m.recipientId === currentUserId && !m.read);
+      for (const msg of unreads) {
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'dm_messages', msg.id), {
+          read: true
+        });
+      }
+    }
+
+    function updateDMUI() {
+      const isUserDrawerOpen = !document.getElementById('dm-drawer').classList.contains('translate-x-full');
+      if (isUserDrawerOpen) {
+        renderUserDMMessages();
+        markUserMessagesAsRead();
+      }
+
+      const userUnreadCount = dmMessages.filter(m => m.recipientId === currentUserId && !m.read).length;
+      const userBadge = document.getElementById('dm-badge');
+      if (userUnreadCount > 0) {
+        userBadge.innerText = userUnreadCount;
+        userBadge.classList.remove('hidden');
+      } else {
+        userBadge.classList.add('hidden');
+      }
+
+      const adminUnreadsCount = dmMessages.filter(m => m.recipientId === 'admin' && !m.read).length;
+      const adminBadge = document.getElementById('admin-dm-badge');
+      if (adminUnreadsCount > 0) {
+        adminBadge.innerText = adminUnreadsCount;
+        adminBadge.classList.remove('hidden');
+      } else {
+        adminBadge.classList.add('hidden');
+      }
+
+      if (isAdminAuthenticated && currentAdminSubTab === 'dm') {
+        renderAdminDM();
+      }
+    }
+
+    // --- Admin Settings System ---
+    function renderAdminSettings() {
+      document.getElementById('setting-admin-code').value = adminCode;
+      document.getElementById('setting-promo-code').value = promoCode;
+    }
+
+    async function saveAdminCodeSetting() {
+      if (!auth.currentUser) return;
+      const newCode = document.getElementById('setting-admin-code').value.trim();
+      if (!newCode) {
+        showToast("コードを空にすることはできません", "error");
+        return;
+      }
+      try {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config'), {
+          adminCode: newCode,
+          promoCode: promoCode
+        });
+        showToast("管理者コードを更新しました", "success");
+      } catch (err) {
+        showToast("設定の保存に失敗しました", "error");
+      }
+    }
+
+    async function savePromoCodeSetting() {
+      if (!auth.currentUser) return;
+      const newCode = document.getElementById('setting-promo-code').value.trim();
+      if (!newCode) {
+        showToast("コードを空にすることはできません", "error");
+        return;
+      }
+      try {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config'), {
+          adminCode: adminCode,
+          promoCode: newCode
+        });
+        showToast("無料化プロモコードを更新しました", "success");
+      } catch (err) {
+        showToast("設定の保存に失敗しました", "error");
+      }
+    }
+
+    async function resetFirestoreData() {
+      if (!auth.currentUser) return;
+      try {
+        for (const prod of products) {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', prod.id));
+        }
+        await seedInitialFirestoreProducts();
+        showToast("Firestoreデータをデモ状態にリセットしました！", "success");
+      } catch (err) {
+        showToast("Firestoreの初期化に失敗しました", "error");
+      }
+    }
+
+    // --- Helper HTML Escape ---
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
 </body>
 </html>
